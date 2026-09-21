@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Dicionário de Dados</title>
+<style>
+  :root {
+    --bg: #f6f7f9;
+    --surface: #ffffff;
+    --border: #dfe3e8;
+    --border-strong: #c7ced6;
+    --head-bg: #eef1f5;
+    --text: #1c2430;
+    --muted: #5b6875;
+    --accent: #1f6feb;
+    --accent-soft: #e8f0fe;
+    --code-bg: #eef1f5;
+    --code-text: #b1420a;
+    --shadow: 0 1px 2px rgba(16,24,40,.06), 0 8px 24px rgba(16,24,40,.06);
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12161c;
+      --surface: #1a1f27;
+      --border: #2b323c;
+      --border-strong: #3a424e;
+      --head-bg: #222932;
+      --text: #e6eaef;
+      --muted: #9aa5b1;
+      --accent: #6ea8fe;
+      --accent-soft: #1d2a3d;
+      --code-bg: #232b35;
+      --code-text: #f0a06a;
+      --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #12161c;
+    --surface: #1a1f27;
+    --border: #2b323c;
+    --border-strong: #3a424e;
+    --head-bg: #222932;
+    --text: #e6eaef;
+    --muted: #9aa5b1;
+    --accent: #6ea8fe;
+    --accent-soft: #1d2a3d;
+    --code-bg: #232b35;
+    --code-text: #f0a06a;
+    --shadow: 0 1px 2px rgba(0,0,0,.4), 0 8px 24px rgba(0,0,0,.3);
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); -webkit-text-size-adjust: 100%; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 64px; }
+
+  header.page { margin-bottom: 28px; }
+  h1 { font-size: 1.7rem; line-height: 1.25; margin: 0 0 6px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); margin: 0; font-size: .95rem; }
+
+  .toolbar {
+    display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+    margin: 22px 0 8px;
+  }
+  .search {
+    flex: 1 1 240px; min-width: 0;
+    padding: 9px 12px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    background: var(--surface);
+    color: var(--text);
+    font: inherit; font-size: .92rem;
+  }
+  .search:focus { outline: 2px solid var(--accent); outline-offset: 1px; border-color: transparent; }
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; }
+  .chip {
+    padding: 7px 13px; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--border-strong); background: var(--surface);
+    color: var(--muted); font: inherit; font-size: .85rem;
+  }
+  .chip[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+  section.entity { margin-top: 30px; }
+  .entity-title {
+    display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;
+    margin: 0 0 10px;
+    font-size: 1.02rem; font-weight: 600;
+  }
+  .entity-title .label { color: var(--muted); font-weight: 500; font-size: .84rem; text-transform: uppercase; letter-spacing: .08em; }
+  .entity-title .count { color: var(--muted); font-weight: 400; font-size: .82rem; }
+
+  .table-box {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    box-shadow: var(--shadow);
+  }
+  table { border-collapse: collapse; width: 100%; min-width: 620px; }
+  th, td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+  thead th {
+    background: var(--head-bg); color: var(--muted);
+    font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 600;
+    border-bottom: 1px solid var(--border-strong);
+    position: sticky; top: 0; z-index: 1;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: var(--accent-soft); }
+  td.attr { white-space: nowrap; }
+  code {
+    font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+    font-size: .86em;
+    background: var(--code-bg); color: var(--code-text);
+    padding: 2px 6px; border-radius: 5px;
+  }
+  td.desc { color: var(--muted); }
+  td.rule { color: var(--text); }
+  .req { color: var(--accent); font-weight: 600; }
+  col.c1 { width: 22%; } col.c2 { width: 33%; } col.c3 { width: 45%; }
+
+  .empty { padding: 26px 14px; text-align: center; color: var(--muted); font-size: .9rem; }
+  .hidden { display: none; }
+
+  footer.page { margin-top: 40px; color: var(--muted); font-size: .82rem; border-top: 1px solid var(--border); padding-top: 14px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="page">
+    <h1>Dicionário de Dados</h1>
+    <p class="sub">Entidades, atributos e regras de negócio associadas.</p>
+  </header>
+
+  <div class="toolbar">
+    <input id="q" class="search" type="search" placeholder="Buscar atributo, descrição ou regra…" aria-label="Buscar">
+    <div class="chips" id="chips">
+      <button class="chip" data-filter="all" aria-pressed="true">Todas</button>
+      <button class="chip" data-filter="CLIENTE" aria-pressed="false">Cliente</button>
+      <button class="chip" data-filter="PRODUTO" aria-pressed="false">Produto</button>
+      <button class="chip" data-filter="PEDIDO" aria-pressed="false">Pedido</button>
+      <button class="chip" data-filter="ITEM_PEDIDO" aria-pressed="false">Item do Pedido</button>
+    </div>
+  </div>
+
+  <section class="entity" data-entity="CLIENTE">
+    <h2 class="entity-title"><span class="label">Entidade</span> CLIENTE <span class="count">6 atributos</span></h2>
+    <div class="table-box">
+      <table>
+        <colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr></thead>
+        <tbody>
+          <tr><td class="attr"><code>id_cliente</code></td><td class="desc">Identificador único do cliente</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
+          <tr><td class="attr"><code>nome</code></td><td class="desc">Nome do cliente / identificador</td><td class="rule"><span class="req">Obrigatório.</span></td></tr>
+          <tr><td class="attr"><code>documento</code></td><td class="desc">CPF ou RG do cliente</td><td class="rule">Opcional no atendimento rápido; usado para busca única.</td></tr>
+          <tr><td class="attr"><code>telefone</code></td><td class="desc">Telefone / WhatsApp</td><td class="rule"><span class="req">Obrigatório</span> para contato/vendas virtuais.</td></tr>
+          <tr><td class="attr"><code>email</code></td><td class="desc">E-mail do cliente</td><td class="rule">Opcional.</td></tr>
+          <tr><td class="attr"><code>endereco_completo</code></td><td class="desc">Logradouro, número, CEP, cidade</td><td class="rule"><span class="req">Obrigatório</span> apenas quando há envio via Correios.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="entity" data-entity="PRODUTO">
+    <h2 class="entity-title"><span class="label">Entidade</span> PRODUTO <span class="count">6 atributos</span></h2>
+    <div class="table-box">
+      <table>
+        <colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr></thead>
+        <tbody>
+          <tr><td class="attr"><code>id_produto</code></td><td class="desc">Identificador único do produto</td><td class="rule">Chave Primária. Gerado pelo sistema.</td></tr>
+          <tr><td class="attr"><code>codigo_estoque</code></td><td class="desc">Código interno de estoque (SKU)</td><td class="rule"><span class="req">Obrigatório</span> e único.</td></tr>
+          <tr><td class="attr"><code>codigo_catalogo</code></td><td class="desc">Código para exibição em catálogo</td><td class="rule">Opcional.</td></tr>
+          <tr><td class="attr"><code>nome_produto</code></td><td class="desc">Nome / descrição do produto</td><td class="rule"><span class="req">Obrigatório.</span></td></tr>
+          <tr><td class="attr"><code>preco_varejo</code></td><td class="desc">Preço de venda unitário no varejo</td><td class="rule">Valor decimal positivo obrigatório.</td></tr>
+          <tr><td class="attr"><code>preco_atacado</code></td><td class="desc">Preço de venda unitário no atacado</td><td class="rule">Valor decimal positivo obrigatório.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="entity" data-entity="PEDIDO">
+    <h2 class="entity-title"><span class="label">Entidade</span> PEDIDO <span class="count">5 atributos</span></h2>
+    <div class="table-box">
+      <table>
+        <colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr></thead>
+        <tbody>
+          <tr><td class="attr"><code>id_pedido</code></td><td class="desc">Código identificador do pedido</td><td class="rule">Chave Primária. Único.</td></tr>
+          <tr><td class="attr"><code>data_hora</code></td><td class="desc">Data e horário da venda</td><td class="rule">Preenchimento automático no registro.</td></tr>
+          <tr><td class="attr"><code>status</code></td><td class="desc">Situação (Orçamento, Aberto, Concluído)</td><td class="rule">Permite alteração enquanto estiver Aberto.</td></tr>
+          <tr><td class="attr"><code>valor_total</code></td><td class="desc">Somatório total do pedido</td><td class="rule">Calculado automaticamente a partir dos itens.</td></tr>
+          <tr><td class="attr"><code>id_cliente</code></td><td class="desc">Referência ao cliente</td><td class="rule"><span class="req">Opcional</span> (permite NULL para venda solta).</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="entity" data-entity="ITEM_PEDIDO">
+    <h2 class="entity-title"><span class="label">Entidade</span> ITEM_PEDIDO <span class="count">6 atributos</span></h2>
+    <div class="table-box">
+      <table>
+        <colgroup><col class="c1"><col class="c2"><col class="c3"></colgroup>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr></thead>
+        <tbody>
+          <tr><td class="attr"><code>id_item_pedido</code></td><td class="desc">Identificador do item no pedido</td><td class="rule">Chave Primária.</td></tr>
+          <tr><td class="attr"><code>quantidade</code></td><td class="desc">Quantidade do produto na venda</td><td class="rule">Numérico inteiro maior que zero.</td></tr>
+          <tr><td class="attr"><code>preco_aplicado</code></td><td class="desc">Preço unitário cobrado no momento</td><td class="rule">Copiado de PRODUTO para preservar o histórico.</td></tr>
+          <tr><td class="attr"><code>tipo_preco</code></td><td class="desc">Modalidade do preço (Atacado / Varejo)</td><td class="rule">Indicação <span class="req">obrigatória</span> da regra aplicada.</td></tr>
+          <tr><td class="attr"><code>id_pedido</code></td><td class="desc">Código do pedido associado</td><td class="rule"><span class="req">Obrigatório.</span></td></tr>
+          <tr><td class="attr"><code>id_produto</code></td><td class="desc">Código do produto associado</td><td class="rule"><span class="req">Obrigatório.</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="empty hidden" id="empty">Nenhum atributo encontrado para essa busca.</p>
+
+  <footer class="page">Dicionário de dados — Cliente, Produto e Pedido.</footer>
+</div>
+
+<script>
+(function () {
+  var q = document.getElementById('q');
+  var chips = Array.prototype.slice.call(document.querySelectorAll('.chip'));
+  var sections = Array.prototype.slice.call(document.querySelectorAll('.entity'));
+  var empty = document.getElementById('empty');
+  var filter = 'all';
+
+  function apply() {
+    var term = (q.value || '').trim().toLowerCase();
+    var anyVisible = false;
+
+    sections.forEach(function (sec) {
+      var matchEntity = (filter === 'all' || sec.dataset.entity === filter);
+      var rows = Array.prototype.slice.call(sec.querySelectorAll('tbody tr'));
+      var shown = 0;
+
+      rows.forEach(function (tr) {
+        var hit = !term || tr.textContent.toLowerCase().indexOf(term) !== -1;
+        var visible = matchEntity && hit;
+        tr.classList.toggle('hidden', !visible);
+        if (visible) shown++;
+      });
+
+      var secVisible = matchEntity && shown > 0;
+      sec.classList.toggle('hidden', !secVisible);
+      if (secVisible) anyVisible = true;
+
+      var countEl = sec.querySelector('.count');
+      if (countEl) countEl.textContent = shown + (shown === 1 ? ' atributo' : ' atributos');
+    });
+
+    empty.classList.toggle('hidden', anyVisible);
+  }
+
+  q.addEventListener('input', apply);
+
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      filter = chip.dataset.filter;
+      chips.forEach(function (c) { c.setAttribute('aria-pressed', String(c === chip)); });
+      apply();
+    });
+  });
+
+  apply();
+})();
+</script>
+</body>
+</html>
