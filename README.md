@@ -158,6 +158,276 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 | `PRODUTO` ↔ `MOVIMENTACAO_ESTOQUE`    | `(1,1)`    | `(0,N)`     | Um para Muitos (`1:N`)                   |
 | `FORNECEDOR` ↔ `MOVIMENTACAO_ESTOQUE` | `(0,1)`    | `(0,N)`     | Um para Muitos (`1:N`) Opcional          |
 
+# Justificativa Técnica — Dicionário de Dados Conceitual e DER
+
+## 1. Justificativa da Modelagem
+
+A modelagem foi desenvolvida com o objetivo de representar, de forma estruturada, os principais elementos envolvidos no processo de **cadastro de clientes, funcionários, fornecedores, produtos, pedidos, endereços, pagamentos e movimentações de estoque**.
+
+A definição das entidades e seus respectivos atributos foi baseada nas necessidades operacionais do sistema, buscando garantir que as informações essenciais para as operações comerciais sejam representadas sem gerar redundância desnecessária.
+
+O modelo também foi estruturado de forma a permitir sua evolução posterior para os modelos **lógico e físico**, nos quais serão definidos detalhes como chaves estrangeiras, tipos de dados, restrições de integridade e mecanismos de implementação no banco de dados.
+
+---
+
+## 2. Justificativa das Entidades
+
+### CLIENTE
+
+A entidade `CLIENTE` representa as pessoas ou organizações que realizam compras no sistema.
+
+Foram definidos atributos básicos de identificação e contato, como nome, documento, telefone e e-mail. O documento foi definido como opcional porque o sistema deve permitir **atendimentos rápidos ou vendas sem cadastro completo**, mantendo a possibilidade de identificação formal quando necessário.
+
+O endereço não é tratado como obrigatório diretamente para todo cliente, pois sua necessidade depende da operação realizada. Entretanto, quando houver entrega, deve existir um endereço válido associado ao cliente.
+
+Essa abordagem evita exigir informações desnecessárias em vendas presenciais simples e, ao mesmo tempo, permite atender operações que dependam de entrega.
+
+---
+
+### FUNCIONARIO
+
+A entidade `FUNCIONARIO` representa os colaboradores responsáveis pelas operações realizadas no sistema.
+
+A associação de cada pedido a um funcionário permite identificar **quem realizou o atendimento ou registrou a venda**, proporcionando rastreabilidade das operações.
+
+O atributo `cargo` permite diferenciar as funções desempenhadas pelos colaboradores, enquanto `comissao_percentual` permite representar a regra de comissão aplicável aos funcionários que possuem direito a comissão sobre vendas.
+
+O CPF foi definido como obrigatório e único para evitar o cadastro duplicado de um mesmo funcionário.
+
+---
+
+### FORNECEDOR
+
+A entidade `FORNECEDOR` representa as empresas responsáveis pelo fornecimento dos produtos comercializados.
+
+A identificação por CNPJ permite manter um cadastro único de cada fornecedor. A razão social ou nome fantasia permite sua identificação no sistema, enquanto o telefone possibilita o contato operacional para compras, reposições e demais atividades relacionadas ao abastecimento do estoque.
+
+A existência dessa entidade também permite relacionar posteriormente fornecedores às movimentações de entrada de estoque.
+
+---
+
+### CATEGORIA
+
+A entidade `CATEGORIA` foi criada para permitir a classificação dos produtos.
+
+A separação entre `CATEGORIA` e `PRODUTO` evita que informações de classificação sejam repetidas em cada registro de produto.
+
+Por exemplo, diversos produtos podem pertencer à categoria `Bebidas`, `Roupas` ou `Eletrônicos`, mantendo uma única definição da categoria.
+
+O nome da categoria deve ser único para impedir a existência de categorias duplicadas com a mesma finalidade.
+
+---
+
+### PRODUTO
+
+A entidade `PRODUTO` representa os itens comercializados pelo estabelecimento.
+
+O atributo `codigo_estoque` funciona como identificador operacional do produto, permitindo sua localização e controle no estoque.
+
+A existência de dois preços, `preco_varejo` e `preco_atacado`, permite representar diferentes condições comerciais de venda.
+
+O atributo `quantidade_estoque` representa o saldo disponível e deve ser atualizado de acordo com as entradas e saídas registradas no sistema.
+
+A associação com `CATEGORIA` permite organizar os produtos de maneira estruturada e facilita consultas, relatórios e operações de gerenciamento do catálogo.
+
+---
+
+### PEDIDO
+
+A entidade `PEDIDO` representa uma operação comercial registrada no sistema.
+
+O pedido concentra informações gerais da venda, como data e hora, status, cliente e funcionário responsável.
+
+O atributo `status` permite representar diferentes etapas do ciclo de vida da operação, como orçamento, pedido aberto, conclusão ou cancelamento.
+
+O `valor_total` é derivado dos produtos e quantidades presentes no pedido, evitando que o valor seja definido manualmente de forma independente dos itens comercializados.
+
+A associação com `CLIENTE` é opcional porque o sistema precisa permitir vendas sem cadastro de cliente, enquanto a associação com `FUNCIONARIO` é obrigatória para garantir a identificação do responsável pela operação.
+
+---
+
+### ENDERECO
+
+A entidade `ENDERECO` foi separada de `CLIENTE` para permitir que um mesmo cliente possua **mais de um endereço**.
+
+Essa separação também evita armazenar um conjunto fixo de campos de endereço diretamente em `CLIENTE`, proporcionando maior flexibilidade para situações como endereço residencial, comercial ou diferentes locais de entrega.
+
+O atributo `principal` permite identificar o endereço padrão do cliente e pode ser utilizado para facilitar o preenchimento de operações de entrega.
+
+---
+
+## 3. Justificativa dos Relacionamentos
+
+### CLIENTE ↔ ENDERECO
+
+O relacionamento foi definido como **1:N**, pois um cliente pode possuir nenhum ou vários endereços cadastrados, enquanto cada endereço pertence a um único cliente.
+
+A cardinalidade permite representar clientes sem endereço cadastrado e clientes que possuem diferentes endereços.
+
+---
+
+### CLIENTE ↔ PEDIDO
+
+O relacionamento foi definido como **1:N opcional**.
+
+Um cliente pode realizar nenhum ou vários pedidos, enquanto cada pedido pode estar associado a um cliente ou ser realizado como uma venda sem identificação do cliente.
+
+Essa decisão está diretamente relacionada à regra de negócio de permitir **venda solta ou atendimento rápido**.
+
+---
+
+### FUNCIONARIO ↔ PEDIDO
+
+O relacionamento é **1:N**.
+
+Um funcionário pode registrar vários pedidos ao longo de sua atividade, enquanto cada pedido possui um funcionário responsável pelo atendimento ou registro.
+
+Essa relação permite manter a rastreabilidade das vendas e também fornece base para o cálculo de comissões.
+
+---
+
+### CATEGORIA ↔ PRODUTO
+
+O relacionamento é **1:N**.
+
+Uma categoria pode conter vários produtos, enquanto cada produto pertence a uma categoria.
+
+Essa estrutura evita a repetição das informações da categoria em cada produto e mantém uma classificação padronizada.
+
+---
+
+### PEDIDO ↔ PRODUTO
+
+O relacionamento é **N:M**.
+
+Um pedido pode conter vários produtos e um mesmo produto pode aparecer em diversos pedidos diferentes.
+
+Esse relacionamento necessita de uma estrutura intermediária, conceitualmente representada como **ITEM_PEDIDO**, responsável por armazenar informações específicas da participação do produto no pedido, como:
+
+* quantidade;
+* preço praticado no momento da venda;
+* subtotal;
+* eventualmente descontos ou outras informações comerciais.
+
+Essa separação é importante porque a quantidade e o preço de um produto não são características permanentes do produto, mas informações referentes à sua participação em uma determinada venda.
+
+---
+
+### PEDIDO ↔ PAGAMENTO
+
+O relacionamento foi definido como **1:N**, permitindo que um pedido possua um ou mais pagamentos.
+
+Essa estrutura possibilita representar situações em que uma mesma compra seja quitada utilizando diferentes formas ou parcelas de pagamento.
+
+Por exemplo, um pedido pode possuir pagamentos associados a diferentes modalidades, conforme as regras comerciais adotadas pelo estabelecimento.
+
+---
+
+### PRODUTO ↔ MOVIMENTACAO_ESTOQUE
+
+O relacionamento é **1:N**.
+
+Um produto pode possuir diversas movimentações de estoque ao longo do tempo, incluindo entradas, saídas, ajustes e outras operações.
+
+Essa estrutura permite manter um histórico das alterações do estoque em vez de registrar somente o saldo atual.
+
+Dessa forma, `quantidade_estoque` representa o estado atual, enquanto `MOVIMENTACAO_ESTOQUE` permite representar o histórico das operações que modificaram esse estado.
+
+---
+
+### FORNECEDOR ↔ MOVIMENTACAO_ESTOQUE
+
+O relacionamento foi definido como **1:N opcional**.
+
+Um fornecedor pode estar associado a várias movimentações de entrada de estoque, enquanto uma movimentação pode possuir ou não um fornecedor identificado.
+
+A associação opcional permite representar movimentações internas, ajustes ou outras operações que não estejam diretamente relacionadas a uma compra realizada de um fornecedor.
+
+---
+
+## 4. Justificativa das Cardinalidades
+
+As cardinalidades foram definidas com base nas regras operacionais do sistema.
+
+De forma geral:
+
+* `1:1` indica participação obrigatória de uma ocorrência em relação à outra;
+* `0:1` indica que a associação é opcional e limitada a uma ocorrência;
+* `0:N` indica que uma entidade pode não possuir nenhuma ou possuir várias ocorrências relacionadas;
+* `1:N` indica que existe pelo menos uma ocorrência no lado correspondente;
+* `N:M` indica que várias ocorrências de uma entidade podem estar relacionadas a várias ocorrências da outra.
+
+As cardinalidades devem representar as **regras reais do negócio**, e não apenas a estrutura técnica do banco de dados.
+
+---
+
+## 5. Observação sobre o Nível Conceitual
+
+Embora este documento seja classificado como **Dicionário de Dados Conceitual (Preliminar)**, alguns elementos apresentados possuem características normalmente detalhadas no modelo lógico.
+
+São exemplos:
+
+* `id_*`;
+* indicação explícita de **Chave Primária**;
+* indicação de **Chave Estrangeira**;
+* utilização do conceito de `NULL`;
+* detalhes específicos de implementação.
+
+Esses elementos foram mantidos nesta etapa porque facilitam a identificação das entidades e atributos e servem como base para a construção posterior do modelo lógico.
+
+No **DER conceitual propriamente dito**, a prioridade deve ser a representação das entidades, atributos relevantes, relacionamentos e cardinalidades. A implementação das chaves estrangeiras e dos tipos de dados deve ser detalhada no modelo lógico.
+
+---
+
+## 6. Justificativa da Separação entre Conceitual, Lógico e Físico
+
+A divisão entre os níveis de modelagem permite separar as regras de negócio dos detalhes de implementação.
+
+### Modelo Conceitual
+
+Representa:
+
+* entidades;
+* atributos relevantes;
+* relacionamentos;
+* cardinalidades;
+* regras de negócio principais.
+
+### Modelo Lógico
+
+Define:
+
+* chaves primárias;
+* chaves estrangeiras;
+* tabelas;
+* normalização;
+* atributos e seus tipos;
+* resolução de relacionamentos N:M.
+
+### Modelo Físico
+
+Define aspectos específicos do SGBD utilizado, como:
+
+* tipos de dados específicos;
+* índices;
+* constraints;
+* sequences ou auto incremento;
+* estratégias de armazenamento;
+* otimizações de desempenho.
+
+Essa separação reduz a dependência do modelo conceitual em relação à tecnologia escolhida e facilita futuras alterações na implementação do sistema.
+
+---
+
+## 7. Conclusão
+
+A modelagem proposta representa os principais processos do domínio comercial: **cadastro de clientes, gestão de funcionários, fornecedores, categorização de produtos, vendas, pagamentos e controle de estoque**.
+
+A estrutura também contempla situações importantes do negócio, como vendas sem cadastro obrigatório de cliente, múltiplos endereços por cliente, diferentes modalidades de preço, múltiplos produtos por pedido, múltiplos pagamentos e histórico de movimentações de estoque.
+
+O modelo conceitual serve, portanto, como base para a construção do **modelo lógico**, no qual os relacionamentos N:M poderão ser resolvidos por entidades associativas e as chaves e restrições de integridade serão especificadas de forma técnica.
+
+
 ---
 
 ### Uso de Inteligência Artificial
