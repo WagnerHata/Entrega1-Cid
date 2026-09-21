@@ -345,91 +345,6 @@ A associação opcional permite representar movimentações internas, ajustes ou
 
 ---
 
-## 4. Justificativa das Cardinalidades
-
-As cardinalidades foram definidas com base nas regras operacionais do sistema.
-
-De forma geral:
-
-* `1:1` indica participação obrigatória de uma ocorrência em relação à outra;
-* `0:1` indica que a associação é opcional e limitada a uma ocorrência;
-* `0:N` indica que uma entidade pode não possuir nenhuma ou possuir várias ocorrências relacionadas;
-* `1:N` indica que existe pelo menos uma ocorrência no lado correspondente;
-* `N:M` indica que várias ocorrências de uma entidade podem estar relacionadas a várias ocorrências da outra.
-
-As cardinalidades devem representar as **regras reais do negócio**, e não apenas a estrutura técnica do banco de dados.
-
----
-
-## 5. Observação sobre o Nível Conceitual
-
-Embora este documento seja classificado como **Dicionário de Dados Conceitual (Preliminar)**, alguns elementos apresentados possuem características normalmente detalhadas no modelo lógico.
-
-São exemplos:
-
-* `id_*`;
-* indicação explícita de **Chave Primária**;
-* indicação de **Chave Estrangeira**;
-* utilização do conceito de `NULL`;
-* detalhes específicos de implementação.
-
-Esses elementos foram mantidos nesta etapa porque facilitam a identificação das entidades e atributos e servem como base para a construção posterior do modelo lógico.
-
-No **DER conceitual propriamente dito**, a prioridade deve ser a representação das entidades, atributos relevantes, relacionamentos e cardinalidades. A implementação das chaves estrangeiras e dos tipos de dados deve ser detalhada no modelo lógico.
-
----
-
-## 6. Justificativa da Separação entre Conceitual, Lógico e Físico
-
-A divisão entre os níveis de modelagem permite separar as regras de negócio dos detalhes de implementação.
-
-### Modelo Conceitual
-
-Representa:
-
-* entidades;
-* atributos relevantes;
-* relacionamentos;
-* cardinalidades;
-* regras de negócio principais.
-
-### Modelo Lógico
-
-Define:
-
-* chaves primárias;
-* chaves estrangeiras;
-* tabelas;
-* normalização;
-* atributos e seus tipos;
-* resolução de relacionamentos N:M.
-
-### Modelo Físico
-
-Define aspectos específicos do SGBD utilizado, como:
-
-* tipos de dados específicos;
-* índices;
-* constraints;
-* sequences ou auto incremento;
-* estratégias de armazenamento;
-* otimizações de desempenho.
-
-Essa separação reduz a dependência do modelo conceitual em relação à tecnologia escolhida e facilita futuras alterações na implementação do sistema.
-
----
-
-## 7. Conclusão
-
-A modelagem proposta representa os principais processos do domínio comercial: **cadastro de clientes, gestão de funcionários, fornecedores, categorização de produtos, vendas, pagamentos e controle de estoque**.
-
-A estrutura também contempla situações importantes do negócio, como vendas sem cadastro obrigatório de cliente, múltiplos endereços por cliente, diferentes modalidades de preço, múltiplos produtos por pedido, múltiplos pagamentos e histórico de movimentações de estoque.
-
-O modelo conceitual serve, portanto, como base para a construção do **modelo lógico**, no qual os relacionamentos N:M poderão ser resolvidos por entidades associativas e as chaves e restrições de integridade serão especificadas de forma técnica.
-
-
----
-
 ### Uso de Inteligência Artificial
 
 | Item | O que registrar |
@@ -441,9 +356,13 @@ O modelo conceitual serve, portanto, como base para a construção do **modelo l
 
 ---
 
-## Conclusão
+## 7. Conclusão
 
-A modelagem conceitual desenvolvida atende integralmente aos requisitos operacionais levantados na pesquisa de campo. O modelo garante a integridade do histórico financeiro, possibilita a edição e inclusão de itens em pedidos em aberto e oferece suporte estruturado para relatórios diários de Ticket Médio e acompanhamento do crescimento da empresa.
+A modelagem proposta representa os principais processos do domínio comercial: **cadastro de clientes, gestão de funcionários, fornecedores, categorização de produtos, vendas, pagamentos e controle de estoque**.
+
+A estrutura também contempla situações importantes do negócio, como vendas sem cadastro obrigatório de cliente, múltiplos endereços por cliente, diferentes modalidades de preço, múltiplos produtos por pedido, múltiplos pagamentos e histórico de movimentações de estoque.
+
+O modelo conceitual serve, portanto, como base para a construção do **modelo lógico**, no qual os relacionamentos N:M poderão ser resolvidos por entidades associativas e as chaves e restrições de integridade serão especificadas de forma técnica.
 
 ---
 
