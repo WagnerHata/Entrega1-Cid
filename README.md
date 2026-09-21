@@ -1,12 +1,17 @@
 # Modelagem de Banco de Dados para Gestão de Vendas Varejo e Atacado
 **Entrega 1 — Modelo Conceitual (DER)**
 
+Wagner - 47584629
+Augusto - 48832588
+Felipe - 47868384
+Matheus - 
+
 ---
 
 ## Introdução
 
 ### Problema
-A organização enfrenta dificuldades no acompanhamento centralizado do histórico de transações, controle de preços em múltiplos canais (redes sociais e presencial) e rastreamento de alterações e acréscimos em pedidos em aberto. A falta de um sistema integrado dificulta a obtenção ágil de métricas de desempenho diárias, como o Ticket Médio.
+A organização enfrenta dificuldades no acompanhamento centralizado do histórico de transações, controle de preços no atendimento presencial e rastreamento de alterações e acréscimos em pedidos em aberto. A falta de um sistema integrado dificulta a obtenção ágil de métricas de desempenho diárias, como o Ticket Médio.
 
 ### Objetivos
 Projetar e modelar a camada conceitual de um banco de dados relacional para centralizar o cadastro de clientes, estruturar o catálogo de produtos com precificação dupla (atacado/varejo), permitir a gestão flexível de pedidos e gerar insumos para relatórios gerenciais diários.
@@ -20,18 +25,18 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 
 ### Caracterização da Organização
 
-- **Nome e natureza da organização:** Empresa comercial de pequeno porte com atuação no comércio varejista e atacadista em ambiente presencial e digital (redes sociais). *RIVIAR PRESENTES*.
+- **Nome e natureza da organização:** Empresa comercial de pequeno porte com atuação no comércio varejista e atacadista em ambiente presencial. *RIVIAR PRESENTES*.
 - **Contexto e porte:** Organização com fins lucrativos. A operação conta com 2 funcionários utilizando o sistema simultaneamente durante turnos de 12 horas. O volume médio varia de **60 a 100 vendas por dia** (~1.800 a 3.000 transações/mês), com projeção de crescimento de 30% ao ano.
 - **Problemas e necessidades identificados:** Descentralização das informações de vendas, risco de inconsistência no histórico de preços praticados quando há reajuste no catálogo e ausência de relatórios automatizados de consolidação diária.
 - **Justificativa da escolha:** A organização possui volume expressivo de transações e regras operacionais ricas (vendas balcão sem identificação de cliente, adição flexível de itens no mesmo pedido, precificação diferenciada por volume), sendo um cenário ideal para modelagem de banco de dados relacional.
-- **Evidências da organização:** *(Anexar no repositório fotos do local/visita, link no Google Maps/Instagram, endereço completo e contato do responsável entrevistado)*.
+- **Evidências da organização:** *(Anexar no repositório fotos do local/visita, endereço completo e contato do responsável entrevistado)*.
 
 ---
 
 ### Processos de Negócio
 
 #### Principais processos mapeados:
-1. **Atendimento e Prospecção:** Identificação do perfil do cliente (presencial ou redes sociais), apresentação do catálogo e negociação de valores (atacado/varejo).
+1. **Atendimento e Prospecção:** Identificação do perfil do cliente (presencial), apresentação do catálogo e negociação de valores (atacado/varejo).
 2. **Elaboração e Flexibilização do Pedido:** Abertura do orçamento/pedido sob um código numérico. O cliente pode retornar e acrescentar/alterar itens no mesmo pedido sem a necessidade de gerar um novo registro.
 3. **Despacho e Logística:** Preparação do produto e envio. Caso haja necessidade de envio via Correios, o endereço completo é exigido e vinculado ao cadastro.
 4. **Atualização de Catálogo e Maquininhas:** Alteração de preços do produto na página e terminais de venda, mantendo o valor histórico congelado nas vendas antigas.
@@ -43,7 +48,7 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 ### Requisitos do Sistema
 
 #### Requisitos Funcionais (RF)
-- **RF01 - Cadastro de Clientes:** Permitir o registro de clientes com Nome, Telefone, E-mail, Redes Sociais, Documento (CPF/RG) e Endereço Completo para entregas.
+- **RF01 - Cadastro de Clientes:** Permitir o registro de clientes com Nome, Telefone, E-mail, Documento (CPF/RG) e Endereço Completo para entregas.
 - **RF02 - Venda Balcão (Venda Solta):** Permitir o registro de vendas/pedidos sem obrigatoriedade de vincular um cliente cadastrado.
 - **RF03 - Precificação Dupla no Catálogo:** Permitir o cadastro de produtos com Código de Estoque (SKU), Código de Catálogo e valores diferenciados para Atacado e Varejo.
 - **RF04 - Alteração de Pedidos em Aberto:** Permitir acrescentar, editar ou remover itens de um pedido previamente aberto utilizando seu identificador original.
@@ -77,7 +82,6 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 | `documento` | CPF ou RG do cliente | Opcional no atendimento rápido; usado para busca única. |
 | `telefone` | Telefone / WhatsApp | Obrigatório para contato/vendas virtuais. |
 | `email` | E-mail do cliente | Opcional. |
-| `rede_social` | Perfil da rede social (ex.: Instagram) | Opcional, usado para controle de prospecção. |
 | `endereco_completo` | Logradouro, número, CEP, cidade | Obrigatório apenas quando há envio via Correios. |
 
 #### Entidade: PRODUTO
