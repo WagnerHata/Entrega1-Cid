@@ -1,10 +1,7 @@
 # Modelagem de Banco de Dados para Gestão de Vendas Varejo e Atacado
 **Entrega 1 — Modelo Conceitual (DER)**
 
-Wagner - 47584629.
-Augusto - 48832588.
-Felipe - 47868384.
-Matheus - .
+Wagner - 47584629 | Augusto - 48832588 | Felipe - 47868384 | Matheus - sem rgm
 
 ---
 
