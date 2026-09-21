@@ -26,7 +26,7 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 - **Contexto e porte:** Organização com fins lucrativos. A operação conta com 2 funcionários utilizando o sistema simultaneamente durante turnos de 12 horas. O volume médio varia de **60 a 100 vendas por dia** (~1.800 a 3.000 transações/mês), com projeção de crescimento de 30% ao ano.
 - **Problemas e necessidades identificados:** Descentralização das informações de vendas, risco de inconsistência no histórico de preços praticados quando há reajuste no catálogo e ausência de relatórios automatizados de consolidação diária.
 - **Justificativa da escolha:** A organização possui volume expressivo de transações e regras operacionais ricas (vendas balcão sem identificação de cliente, adição flexível de itens no mesmo pedido, precificação diferenciada por volume), sendo um cenário ideal para modelagem de banco de dados relacional.
-- **Evidências da organização:** Imagem da visita: [img/local.jpeg](https://github.com/WagnerHata/Entrega1-Cid/blob/b4b3bbd4335d419c6112e43181bfeb7c06b7f28e/img/local.jpeg) | Instagram da empresa: https://www.instagram.com/riviarpresentes/
+- **Evidências da organização:** Imagem da visita: [img/local.jpeg](https://github.com/WagnerHata/Entrega1-Cid/blob/b4b3bbd4335d419c6112e43181bfeb7c06b7f28e/img/local.jpeg) | Instagram da empresa: https://www.instagram.com/riviarpresentes/ | Endereço 1: R. Sete de Setembro, 555 - Parque Suzano, Suzano - SP, 08673-020 ; Endereço 2: Av. Ver. Narciso Yague Guimarães, 1001 - Jardim Armenia, Mogi das Cruzes - SP, 08780-000 | Forma de contato: (11)98295-4874 ; contato@riviarpresentes.com.br ; Vitória e Ricardo.
 
 ---
 
@@ -69,61 +69,170 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 
 ### Dicionário de Dados Conceitual (Preliminar)
 
-#### Entidade: CLIENTE
-| Atributo | Descrição | Regra de negócio associada |
-| :--- | :--- | :--- |
-| `id_cliente` | Identificador único do cliente | Chave Primária. Gerado automaticamente. |
-| `nome` | Nome do cliente / identificador | Obrigatório. |
-| `documento` | CPF ou RG do cliente | Opcional no atendimento rápido; usado para busca única. |
-| `telefone` | Telefone / WhatsApp | Obrigatório para contato/vendas virtuais. |
-| `email` | E-mail do cliente | Opcional. |
-| `endereco_completo` | Logradouro, número, CEP, cidade | Obrigatório apenas quando há envio via Correios. |
+## Entidade: CLIENTE
 
-#### Entidade: PRODUTO
-| Atributo | Descrição | Regra de negócio associada |
-| :--- | :--- | :--- |
-| `id_produto` | Identificador único do produto | Chave Primária. Gerado pelo sistema. |
-| `codigo_estoque` | Código interno de estoque (SKU) | Obrigatório e único. |
-| `codigo_catalogo` | Código para exibição em catálogo | Opcional. |
-| `nome_produto` | Nome / descrição do produto | Obrigatório. |
-| `preco_varejo` | Preço de venda unitário no varejo | Valor decimal positivo obrigatório. |
-| `preco_atacado` | Preço de venda unitário no atacado | Valor decimal positivo obrigatório. |
+  -----------------------------------------------------------------------
+  **Atributo**            **Descrição**           **Regra de negócio
+                                                  associada**
+  ----------------------- ----------------------- -----------------------
+  `id_cliente`            Identificador único do  Chave Primária. Gerado
+                          cliente                 automaticamente.
 
-#### Entidade: PEDIDO
-| Atributo | Descrição | Regra de negócio associada |
-| :--- | :--- | :--- |
-| `id_pedido` | Código identificador do pedido | Chave Primária. Único. |
-| `data_hora` | Data e horário da venda | Preenchimento automático no registro. |
-| `status` | Situação (Orçamento, Aberto, Concluído) | Permite alteração enquanto estiver Aberto. |
-| `valor_total` | Somatório total do pedido | Calculado automaticamente a partir dos itens. |
-| `id_cliente` | Referência ao cliente | Chave Estrangeira. **Opcional (Permite NULL para venda solta)**. |
+  `nome`                  Nome do cliente /       Obrigatório.
+                          identificador           
 
-#### Entidade: ITEM_PEDIDO
-| Atributo | Descrição | Regra de negócio associada |
-| :--- | :--- | :--- |
-| `id_item_pedido` | Identificador do item no pedido | Chave Primária. |
-| `quantidade` | Quantidade do produto na venda | Numérico inteiro maior que zero. |
-| `preco_aplicado` | Preço unitário cobrado no momento | Copiado de PRODUTO para preservar o histórico. |
-| `tipo_preco` | Modalidade do preço (Atacado / Varejo) | Indicação obrigatória da regra aplicada. |
-| `id_pedido` | Código do pedido associado | Chave Estrangeira. Obrigatório. |
-| `id_produto` | Código do produto associado | Chave Estrangeira. Obrigatório. |
+  `documento`             CPF ou CNPJ do cliente  Opcional no atendimento
+                                                  rápido; único se
+                                                  preenchido.
 
----
+  `telefone`              Telefone / WhatsApp     Obrigatório para
+                                                  contato/vendas
+                                                  virtuais.
 
-### Modelagem Conceitual e Diagrama (DER)
+  `email`                 E-mail do cliente       Opcional.
 
-#### Entidades e Relacionamentos Mapeados:
-- **CLIENTE (0,1) ----- (0,N) PEDIDO:** Um cliente pode realizar zero ou vários pedidos. Um pedido pode ter 0 (venda solta) ou 1 cliente associado.
-- **PEDIDO (1,1) ----- (1,N) ITEM_PEDIDO:** Um pedido deve possuir pelo menos 1 item e pode conter vários. Cada item pertence a exatamente 1 pedido.
-- **PRODUTO (0,N) ----- (1,1) ITEM_PEDIDO:** Um produto pode constar em múltiplos itens de pedidos. Cada registro de item refere-se a 1 produto.
+  `endereco_completo`     Logradouro, número,     Obrigatório apenas
+                          CEP, cidade             quando há entrega.
+  -----------------------------------------------------------------------
 
----
+## Entidade: FUNCIONARIO
 
-### Justificativa Técnica
+  -----------------------------------------------------------------------
+  **Atributo**            **Descrição**           **Regra de negócio
+                                                  associada**
+  ----------------------- ----------------------- -----------------------
+  `id_funcionario`        Identificador único do  Chave Primária. Gerado
+                          funcionário             pelo sistema.
 
-- **Entidade Associativa `ITEM_PEDIDO`:** A criação desta entidade é tecnicamente necessária para resolver o relacionamento de muitos para muitos ($N:M$) entre `PEDIDO` e `PRODUTO`. Além disso, ela armazena o atributo `preco_aplicado`, garantindo a imutabilidade histórica das vendas perante alterações futuras nos preços do catálogo de produtos.
-- **Cardinalidade Opcional entre `CLIENTE` e `PEDIDO`:** A definição de cardinalidade mínima $(0,1)$ atende diretamente à regra operacional de "venda solta" (venda balcão sem identificação), impedindo a necessidade de poluir o banco de dados com cadastros genéricos ou falsos.
-- **Suporte ao Ticket Médio:** A estrutura das entidades `PEDIDO` e `ITEM_PEDIDO` vinculadas por `data_hora` garante a extração rápida de métricas diárias, dividindo o faturamento acumulado do dia pelo total de pedidos finalizados no período.
+  `nome`                  Nome completo do        Obrigatório.
+                          funcionário             
+
+  `cpf`                   Documento do            Obrigatório e único.
+                          funcionário             
+
+  `cargo`                 Função (Vendedor,       Indicação da permissão
+                          Caixas, Gerente)        e atribuição.
+
+  `comissao_percentual`   Percentual de comissão  Valor decimal padrão do
+                          sobre vendas            vendedor (opcional).
+  -----------------------------------------------------------------------
+
+## Entidade: FORNECEDOR
+
+  **Atributo**         **Descrição**                   **Regra de negócio associada**
+  -------------------- ------------------------------- --------------------------------
+  `id_fornecedor`      Identificador do fornecedor     Chave Primária.
+  `razao_social`       Razão Social ou Nome Fantasia   Obrigatório.
+  `cnpj`               CNPJ da empresa fornecedora     Obrigatório e único.
+  `telefone_contato`   Canal direto de atendimento     Obrigatório.
+
+## Entidade: CATEGORIA
+
+  -----------------------------------------------------------------------
+  **Atributo**            **Descrição**           **Regra de negócio
+                                                  associada**
+  ----------------------- ----------------------- -----------------------
+  `id_categoria`          Identificador da        Chave Primária.
+                          categoria               
+
+  `nome_categoria`        Nome do agrupamento     Obrigatório e único.
+                          (ex: Bebidas, Roupas)   
+  -----------------------------------------------------------------------
+
+## Entidade: PRODUTO
+
+  -----------------------------------------------------------------------
+  **Atributo**            **Descrição**           **Regra de negócio
+                                                  associada**
+  ----------------------- ----------------------- -----------------------
+  `id_produto`            Identificador único do  Chave Primária. Gerado
+                          produto                 pelo sistema.
+
+  `codigo_estoque`        Código interno de       Obrigatório e único.
+                          estoque (SKU)           
+
+  `nome_produto`          Nome / descrição do     Obrigatório.
+                          produto                 
+
+  `preco_varejo`          Preço de venda unitário Valor decimal positivo
+                          no varejo               obrigatório.
+
+  `preco_atacado`         Preço de venda unitário Valor decimal positivo
+                          no atacado              obrigatório.
+
+  `quantidade_estoque`    Saldo físico atual em   Atualizado por entradas
+                          estoque                 e vendas.
+
+  `id_categoria`          Referência à categoria  Obrigatório.
+                          do produto              
+  -----------------------------------------------------------------------
+
+## Entidade: PEDIDO
+
+  -----------------------------------------------------------------------
+  **Atributo**            **Descrição**           **Regra de negócio
+                                                  associada**
+  ----------------------- ----------------------- -----------------------
+  `id_pedido`             Código identificador do Chave Primária. Único.
+                          pedido                  
+
+  `data_hora`             Data e horário da venda Preenchimento
+                                                  automático no registro.
+
+  `status`                Situação (Orçamento,    Permite alteração
+                          Aberto, Concluído,      enquanto estiver
+                          Cancelado)              Aberto.
+
+  `valor_total`           Somatório total do      Calculado
+                          pedido                  automaticamente a
+                                                  partir dos itens.
+
+  `id_cliente`            Referência ao cliente   Opcional (Permite NULL
+                                                  para venda solta).
+
+  `id_funcionario`        Funcionário responsável Obrigatório para
+                          pelo atendimento        identificação de
+                                                  autoria/comissão.
+  -----------------------------------------------------------------------
+
+## Entidade: ENDERECO
+
+  -----------------------------------------------------------------------
+  **Atributo**            **Descrição**           **Regra de negócio
+                                                  associada**
+  ----------------------- ----------------------- -----------------------
+  `id_endereco`           Identificador único do  Chave Primária. Gerado
+                          endereço                automaticamente.
+
+  `logradouro`            Rua, Avenida, Alameda,  Obrigatório.
+                          etc.                    
+
+  `numero`                Número do imóvel        Obrigatório (usar "S/N"
+                                                  para imóveis sem
+                                                  número).
+
+  `complemento`           Apartamento, bloco,     Opcional.
+                          ponto de referência     
+
+  `bairro`                Bairro ou distrito      Obrigatório.
+
+  `cidade`                Nome do município       Obrigatório.
+
+  `estado`                Sigla da unidade        Obrigatório (2
+                          federativa (UF, ex: SP, caracteres).
+                          RJ)                     
+
+  `cep`                   Código de Endereçamento Obrigatório para
+                          Postal                  envios/entregas.
+
+  `principal`             Indica se é o endereço  Booleano (Sim/Não).
+                          padrão do cliente       Ajuda a preencher
+                                                  vendas automaticamente.
+
+  `id_cliente`            Referência ao cliente   Chave Estrangeira.
+                          proprietário            Obrigatório para
+                                                  vincular ao cliente.
+  -----------------------------------------------------------------------
 
 ---
 
