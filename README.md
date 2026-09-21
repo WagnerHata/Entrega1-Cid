@@ -1,7 +1,7 @@
 # Modelagem de Banco de Dados para Gestão de Vendas Varejo e Atacado
 **Entrega 1 — Modelo Conceitual (DER)**
 
-Wagner - 47584629 | Augusto - 48832588 | Felipe - 47868384 | Matheus - sem rgm
+Wagner - 47584629 | Augusto - 48832588 | Felipe - 47868384 | Matheus - 47854928
 
 ---
 
@@ -37,8 +37,6 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 2. **Elaboração e Flexibilização do Pedido:** Abertura do orçamento/pedido sob um código numérico. O cliente pode retornar e acrescentar/alterar itens no mesmo pedido sem a necessidade de gerar um novo registro.
 3. **Despacho e Logística:** Preparação do produto e envio. Caso haja necessidade de envio via Correios, o endereço completo é exigido e vinculado ao cadastro.
 4. **Atualização de Catálogo e Maquininhas:** Alteração de preços do produto na página e terminais de venda, mantendo o valor histórico congelado nas vendas antigas.
-
-*(Anexar imagens dos fluxogramas dos processos na pasta `/img` do repositório)*.
 
 ---
 
