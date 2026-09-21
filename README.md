@@ -144,6 +144,20 @@ O escopo desta Entrega 1 limita-se ao levantamento de requisitos de negócio, ma
 | `principal` | Indica se é o endereço padrão do cliente | Booleano (Sim/Não). Ajuda a preencher vendas automaticamente. |
 | `id_cliente` | Referência ao cliente proprietário | Chave Estrangeira. Obrigatório para vincular ao cliente. |
 
+### Modelagem Conceitual e Diagrama (DER)
+
+#### Entidades e Relacionamentos Mapeados:
+| **Relacionamento**                    | **Origem** | **Destino** | **Tipo de Conexão**                      |
+| ------------------------------------- | ---------- | ----------- | ---------------------------------------- |
+| `CLIENTE` ↔ `ENDERECO`                | `(1,1)`    | `(0,N)`     | Um para Muitos (`1:N`)                   |
+| `CLIENTE` ↔ `PEDIDO`                  | `(0,1)`    | `(0,N)`     | Um para Muitos (`1:N`) Opcional          |
+| `FUNCIONARIO` ↔ `PEDIDO`              | `(1,1)`    | `(0,N)`     | Um para Muitos (`1:N`)                   |
+| `CATEGORIA` ↔ `PRODUTO`               | `(1,1)`    | `(0,N)`     | Um para Muitos (`1:N`)                   |
+| `PEDIDO` ↔ `PRODUTO`                  | `(1,N)`    | `(0,N)`     | Muitos para Muitos (`N:M`) com Atributos |
+| `PEDIDO` ↔ `PAGAMENTO`                | `(1,1)`    | `(1,N)`     | Um para Muitos (`1:N`) Obrigatório       |
+| `PRODUTO` ↔ `MOVIMENTACAO_ESTOQUE`    | `(1,1)`    | `(0,N)`     | Um para Muitos (`1:N`)                   |
+| `FORNECEDOR` ↔ `MOVIMENTACAO_ESTOQUE` | `(0,1)`    | `(0,N)`     | Um para Muitos (`1:N`) Opcional          |
+
 ---
 
 ### Uso de Inteligência Artificial
