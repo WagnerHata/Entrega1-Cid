@@ -1,6 +1,8 @@
 # Entrega 1 — Modelo Conceitual (DER)
 ### Modelagem de Banco de Dados para Gestão de Vendas Varejo e Atacado
 
+---
+
 ## Metadados
 
 - Wagner - 47584629
@@ -11,7 +13,6 @@
 ---
 
 ## 1. Caracterização da Organização
-
 
 **Nome e natureza da organização:** RIVIAR PRESENTES — empresa comercial de pequeno porte com atuação no comércio varejista e atacadista em ambiente presencial.
 
@@ -24,6 +25,7 @@
 **Justificativa da escolha:** A organização possui volume expressivo de transações e regras operacionais ricas (vendas balcão sem identificação de cliente, adição flexível de itens no mesmo pedido, precificação diferenciada por volume), sendo um cenário ideal para modelagem de banco de dados relacional.
 
 **Evidências da organização:**
+
 - Imagem da visita: `img/local.jpeg`
 - Instagram da empresa: https://www.instagram.com/riviarpresentes/
 - Endereço 1: R. Sete de Setembro, 555 - Parque Suzano, Suzano - SP, 08673-020
@@ -34,7 +36,6 @@
 
 ## 2. Processos de Negócio
 
-
 **Principais processos mapeados:**
 
 1. **Atendimento e Prospecção:** Identificação do perfil do cliente (presencial), apresentação do catálogo e negociação de valores (atacado/varejo).
@@ -42,15 +43,13 @@
 3. **Despacho e Logística:** Preparação do produto e envio. Caso haja necessidade de envio via Correios, o endereço completo é exigido e vinculado ao cadastro.
 4. **Atualização de Catálogo e Maquininhas:** Alteração de preços do produto na página e terminais de venda, mantendo o valor histórico congelado nas vendas antigas.
 
-
 ---
 
 ## 3. Requisitos do Sistema
 
-
 ### 3.1 Requisitos Funcionais
 
-- **RF01 - Cadastro de Clientes:** Permitir o registro de clientes com Nome, Telefone, E-mail, Documento (CPF/RG) e Endereço Completo para entregas.
+- **RF01 - Cadastro de Clientes:** Permitir o registro de clientes com Nome, Telefone, E-mail, Documento (CPF/RG) e Endereço para entregas.
 - **RF02 - Venda Balcão (Venda Solta):** Permitir o registro de vendas/pedidos sem obrigatoriedade de vincular um cliente cadastrado.
 - **RF03 - Precificação Dupla no Catálogo:** Permitir o cadastro de produtos com Código de Estoque (SKU), Código de Catálogo e valores diferenciados para Atacado e Varejo.
 - **RF04 - Alteração de Pedidos em Aberto:** Permitir acrescentar, editar ou remover itens de um pedido previamente aberto utilizando seu identificador original.
@@ -62,7 +61,7 @@
 
 - **RNF01 - Concorrência e Disponibilidade:** O sistema deve suportar no mínimo 2 usuários simultâneos operando ativamente durante 12 horas diárias.
 - **RNF02 - Desempenho:** Processar consultas e registros em tempo inferior a 2 segundos para o volume de até 100 vendas/dia, suportando crescimento projetado de 30%.
-- **RNF03 - Segurança e LGPD:** O acesso aos dados pessoais confidenciais dos clientes e relatórios financeiros deve ser restrito exclusivamente aos perfis de Diretor e Gerente.
+- **RNF03 - Segurança e LGPD:** O acesso aos dados pessoais confidenciais dos clientes e aos relatórios financeiros deve ser restrito exclusivamente ao cargo de Gerente, responsável pela supervisão da operação; os cargos de Vendedor e Caixa possuem acesso apenas às funções operacionais de atendimento e registro de vendas.
 
 ---
 
@@ -70,20 +69,19 @@
 
 **Regras operacionais:**
 
-1. **Opcionalidade do Cliente:** Toda venda deve pertencer a 0 ou 1 Cliente (venda solta/balcão é permitida).
-2. **Identificação Única do Pedido:** Cada pedido é identificado por um código sequencial único e pela data/hora do registro.
-3. **Congelamento do Valor Unitário:** Ao incluir um produto no pedido, o valor praticado no momento (Atacado ou Varejo) deve ser copiado para o item do pedido.
-4. **Nível de Acesso:** Apenas os cargos de Diretor e Gerente possuem permissão para visualizar e alterar dados sigilosos e relatórios de faturamento.
+- **Opcionalidade do Cliente:** Toda venda deve pertencer a 0 ou 1 Cliente (venda solta/balcão é permitida).
+- **Identificação Única do Pedido:** Cada pedido é identificado por um código sequencial único e pela data/hora do registro.
+- **Congelamento do Valor Unitário:** Ao incluir um produto no pedido, o valor praticado no momento (Atacado ou Varejo) deve ser copiado para o item do pedido.
+- **Nível de Acesso:** Apenas o cargo de Gerente possui permissão para visualizar e alterar dados sigilosos e relatórios de faturamento.
 
 **Restrições organizacionais:**
 
-1. **LGPD (Lei Geral de Proteção de Dados):** Como legislação federal, exige que dados pessoais dos clientes (documento, telefone, e-mail, endereço) sejam tratados com controle de acesso e finalidade definida. Essa restrição legal molda diretamente o modelo: obriga a separação entre dados operacionais (ex.: histórico de compras) e dados pessoais sensíveis, e justifica a regra de acesso restrito a Diretor/Gerente (RNF03) já no nível conceitual, não apenas como característica técnica do sistema.
-2. **Operação exclusivamente presencial, com equipe reduzida:** A organização opera com apenas 2 funcionários por turno de 12 horas, sem canal de vendas online. Essa limitação de porte restringe o escopo do modelo — não há necessidade, por exemplo, de suportar múltiplos canais de venda ou grandes volumes de concorrência —, e é o motivo pelo qual o requisito RNF01 fixa apenas 2 usuários simultâneos como referência mínima.
+- **LGPD (Lei Geral de Proteção de Dados):** Como legislação federal, exige que dados pessoais dos clientes (documento, telefone, e-mail, endereço) sejam tratados com controle de acesso e finalidade definida. Essa restrição legal molda diretamente o modelo: obriga a separação entre dados operacionais (ex.: histórico de compras) e dados pessoais sensíveis, e justifica a regra de acesso restrito ao cargo de Gerente (RNF03) já no nível conceitual, não apenas como característica técnica do sistema.
+- **Operação exclusivamente presencial, com equipe reduzida:** A organização opera com apenas 2 funcionários por turno de 12 horas, sem canal de vendas online. Essa limitação de porte restringe o escopo do modelo — não há necessidade, por exemplo, de suportar múltiplos canais de venda ou grandes volumes de concorrência —, e é o motivo pelo qual o requisito RNF01 fixa apenas 2 usuários simultâneos como referência mínima.
 
 ---
 
 ## 5. Dicionário de Dados Conceitual (Preliminar)
-
 
 ### Entidade: CLIENTE
 
@@ -92,9 +90,8 @@
 | id_cliente | Identificador único do cliente | Chave Primária. Gerado automaticamente. |
 | nome | Nome do cliente / identificador | Obrigatório. |
 | documento | CPF ou CNPJ do cliente | Opcional no atendimento rápido; único se preenchido. |
-| telefone | Telefone / WhatsApp | Obrigatório para contato/vendas virtuais. |
+| telefone | Telefone / WhatsApp | Obrigatório para contato e possível entrega. |
 | email | E-mail do cliente | Opcional. |
-| endereco_completo | Logradouro, número, CEP, cidade | Obrigatório apenas quando há entrega. |
 
 ### Entidade: FUNCIONARIO
 
@@ -103,7 +100,7 @@
 | id_funcionario | Identificador único do funcionário | Chave Primária. Gerado pelo sistema. |
 | nome | Nome completo do funcionário | Obrigatório. |
 | cpf | Documento do funcionário | Obrigatório e único. |
-| cargo | Função (Vendedor, Caixa, Gerente) | Indicação da permissão e atribuição. |
+| cargo | Função (Vendedor, Caixa ou Gerente) | Indicação da permissão e atribuição. Define o nível de acesso conforme RNF03. |
 | comissao_percentual | Percentual de comissão sobre vendas | Valor decimal padrão do vendedor (opcional). |
 
 ### Entidade: FORNECEDOR
@@ -199,10 +196,9 @@
 
 ## 6. Modelagem Conceitual (Entidades, Atributos, Relacionamentos)
 
-
 **Entidades reconhecidas:**
 
-- **CLIENTE** — representa as pessoas ou organizações que realizam compras. O documento é opcional porque o sistema precisa permitir atendimentos rápidos ou vendas sem cadastro completo, mantendo a possibilidade de identificação formal quando necessário.
+- **CLIENTE** — representa as pessoas ou organizações que realizam compras. O documento é opcional porque o sistema precisa permitir atendimentos rápidos ou vendas sem cadastro completo, mantendo a possibilidade de identificação formal quando necessário. Os dados de endereço são mantidos em entidade própria (ver ENDERECO), e não como atributo direto de CLIENTE.
 - **FUNCIONARIO** — representa os colaboradores. A associação de cada pedido a um funcionário garante rastreabilidade e permite calcular comissão via `comissao_percentual`.
 - **FORNECEDOR** — representa as empresas responsáveis pelo fornecimento dos produtos, identificadas por CNPJ único, permitindo relacioná-las às entradas de estoque.
 - **CATEGORIA** — criada para classificar os produtos e evitar repetição da informação de classificação em cada produto.
@@ -224,7 +220,7 @@
 | FUNCIONARIO ↔ PEDIDO | (1,1) | (0,N) | Um para Muitos (1:N) |
 | CATEGORIA ↔ PRODUTO | (1,1) | (0,N) | Um para Muitos (1:N) |
 | PEDIDO ↔ PRODUTO | (1,N) | (0,N) | Muitos para Muitos (N:M), resolvido via ITEM_PEDIDO |
-| PEDIDO ↔ PAGAMENTO | (1,1) | (1,N) | Um para Muitos (1:N) Obrigatório |
+| PEDIDO ↔ PAGAMENTO | (1,1) | (0,N) | Um para Muitos (1:N) Opcional |
 | PRODUTO ↔ MOVIMENTACAO_ESTOQUE | (1,1) | (0,N) | Um para Muitos (1:N) |
 | FORNECEDOR ↔ MOVIMENTACAO_ESTOQUE | (0,1) | (0,N) | Um para Muitos (1:N) Opcional |
 
@@ -233,34 +229,32 @@
 - **FUNCIONARIO ↔ PEDIDO (1:N):** cada pedido tem um funcionário responsável, dando rastreabilidade e base para comissão.
 - **CATEGORIA ↔ PRODUTO (1:N):** cada produto pertence a uma categoria, evitando repetição de dados de classificação.
 - **PEDIDO ↔ PRODUTO (N:M via ITEM_PEDIDO):** um pedido pode conter vários produtos e um produto pode estar em vários pedidos; a quantidade e o preço praticado não são atributos do produto, mas da sua participação em um pedido específico.
-- **PEDIDO ↔ PAGAMENTO (1:N):** permite que um mesmo pedido seja quitado com mais de uma forma ou parcela de pagamento.
+- **PEDIDO ↔ PAGAMENTO (1:N opcional):** permite que um mesmo pedido seja quitado com mais de uma forma ou parcela de pagamento; a associação é opcional porque um pedido em status Orçamento ou Aberto ainda não possui pagamento registrado.
 - **PRODUTO ↔ MOVIMENTACAO_ESTOQUE (1:N):** mantém o histórico de entradas/saídas/ajustes de cada produto, enquanto `quantidade_estoque` reflete apenas o saldo atual.
 - **FORNECEDOR ↔ MOVIMENTACAO_ESTOQUE (1:N opcional):** nem toda movimentação está ligada a uma compra de fornecedor (ex.: ajustes internos), por isso a associação é opcional.
 
-**Restrições e políticas organizacionais aplicadas ao modelo:** a exigência da LGPD (Seção 4) reforça a separação entre dados operacionais e dados pessoais sensíveis em CLIENTE e ENDERECO, e justifica que o controle de acesso (Diretor/Gerente) seja tratado como regra de negócio desde o nível conceitual. A operação presencial com equipe reduzida (Seção 4) é o que mantém o modelo enxuto, sem entidades voltadas a múltiplos canais de venda.
+**Restrições e políticas organizacionais aplicadas ao modelo:** a exigência da LGPD (Seção 4) reforça a separação entre dados operacionais e dados pessoais sensíveis em CLIENTE e ENDERECO, e justifica que o controle de acesso (cargo de Gerente) seja tratado como regra de negócio desde o nível conceitual. A operação presencial com equipe reduzida (Seção 4) é o que mantém o modelo enxuto, sem entidades voltadas a múltiplos canais de venda.
 
 ---
 
 ## 7. Diagrama Entidade-Relacionamento (DER)
 
+O DER está anexado separadamente ao repositório, em imagem (`img/der.png`).
 
-O DER está anexado separadamente ao repositório, em imagem (`img/der.png` — ajustar caminho conforme o arquivo real).
-
-O diagrama deve representar todas as 10 entidades levantadas nas Seções 5 e 6 — **incluindo CLIENTE, FUNCIONARIO, FORNECEDOR, CATEGORIA, PRODUTO, PEDIDO, ENDERECO, ITEM_PEDIDO, PAGAMENTO e MOVIMENTACAO_ESTOQUE** — com seus atributos e as cardinalidades exatamente como descritas na tabela de relacionamentos da Seção 6.
-
+O diagrama deve representar todas as 10 entidades levantadas nas Seções 5 e 6 — incluindo CLIENTE, FUNCIONARIO, FORNECEDOR, CATEGORIA, PRODUTO, PEDIDO, ENDERECO, ITEM_PEDIDO, PAGAMENTO e MOVIMENTACAO_ESTOQUE — com seus atributos e as cardinalidades exatamente como descritas na tabela de relacionamentos da Seção 6.
 
 ---
 
 ## 8. Justificativa Técnica
-
 
 A modelagem foi desenvolvida para representar, de forma estruturada, os principais elementos do processo de cadastro de clientes, funcionários, fornecedores, produtos, pedidos, endereços, pagamentos e movimentações de estoque. A definição das entidades e atributos foi baseada nas necessidades operacionais levantadas na pesquisa de campo, buscando garantir que as informações essenciais às operações comerciais fossem representadas sem redundância desnecessária.
 
 Algumas decisões de abstração merecem destaque:
 
 - **ITEM_PEDIDO como entidade associativa, em vez de atributo multivalorado em PEDIDO:** a alternativa de armazenar produtos diretamente como uma lista dentro de PEDIDO violaria a 1ª Forma Normal e impediria consultas relacionais eficientes (ex.: total vendido por produto). Criar uma entidade própria permite guardar quantidade, preço praticado e subtotal por item, sem repetir dados do PRODUTO.
-- **Preço duplicado em PRODUTO (`preco_varejo`/`preco_atacado`) em vez de uma tabela de tabelas de preço:** para o porte atual da organização (2 tabelas fixas, sem variação por cliente ou período), duas colunas são suficientes e mais simples do que uma entidade `TABELA_PRECO` separada, que seria uma abstração desnecessária nesta etapa.
-- **ENDERECO separado de CLIENTE:** evita fixar um único conjunto de campos de endereço por cliente e permite múltiplos endereços (residencial, comercial, entrega), sem exigir alteração estrutural futura.
+- **Preço duplicado em PRODUTO (`preco_varejo`/`preco_atacado`) em vez de uma tabela de tabelas de preço:** para o porte atual da organização (2 tabelas fixas, sem variação por cliente ou período), duas colunas são suficientes e mais simples do que uma entidade TABELA_PRECO separada, que seria uma abstração desnecessária nesta etapa.
+- **ENDERECO separado de CLIENTE:** evita fixar um único conjunto de campos de endereço por cliente e permite múltiplos endereços (residencial, comercial, entrega), sem exigir alteração estrutural futura. Por essa razão, o campo de endereço não é mantido como atributo direto de CLIENTE — toda a informação de endereço fica centralizada na entidade ENDERECO, que se relaciona a CLIENTE em 1:N.
+- **PEDIDO ↔ PAGAMENTO opcional do lado de PAGAMENTO (0,N):** a alternativa seria exigir ao menos um pagamento vinculado a todo pedido, mas isso não refletiria pedidos em status Orçamento ou Aberto, que ainda estão em negociação ou não foram quitados.
 - **MOVIMENTACAO_ESTOQUE como histórico, em vez de apenas atualizar `quantidade_estoque`:** manter apenas o saldo atual impediria auditoria e rastreamento de entradas/saídas ao longo do tempo — informação relevante dado o crescimento projetado de 30% ao ano.
 - **PEDIDO ↔ CLIENTE opcional (0,1):** alternativa seria tornar o cliente obrigatório em todo pedido, mas isso contrariaria a regra observada em campo de venda balcão sem identificação (RF02).
 
@@ -277,12 +271,12 @@ O modelo foi estruturado para permitir evolução posterior para os modelos lóg
 | **Prompt(s) utilizados** | "Com base nas respostas do questionário de negócio, estruture os Requisitos Funcionais, Regras de Negócio e Dicionário de Dados para a Entrega 1." |
 | **Resposta recebida** | A IA retornou uma primeira versão dos Requisitos Funcionais/Não Funcionais e das tabelas do Dicionário de Dados, incluindo a sugestão de tornar a identificação do cliente obrigatória em todo pedido. |
 | **Fontes consultadas e verificadas** | Nenhuma fonte externa foi citada pela IA nessa etapa; o conteúdo gerado foi verificado apenas contra as respostas do questionário de negócio e as observações da visita de campo à RIVIAR PRESENTES. |
-| **Trechos rejeitados ou corrigidos** | O grupo rejeitou a sugestão de tornar a identificação do cliente obrigatória em todos os pedidos e ajustou a cardinalidade CLIENTE↔PEDIDO para opcional (0,1), a fim de respeitar a regra de venda solta informada pelo entrevistado. |
-| **Justificativa da escolha final** | A cardinalidade opcional foi mantida porque reflete uma prática real e frequente da organização (venda balcão sem cadastro); tornar o cliente obrigatório geraria atrito no atendimento presencial e não correspondia ao processo observado em campo. |
-| **Reflexão crítica** | A IA tende a sugerir modelos "mais normalizados" por padrão (ex.: cliente obrigatório), sem considerar particularidades operacionais levantadas apenas na pesquisa de campo. Isso reforça a necessidade de validar toda sugestão da IA contra a observação real da organização, e não aceitar recomendações genéricas de modelagem sem esse contraste. |
+| **Trechos rejeitados ou corrigidos** | O grupo rejeitou a sugestão de tornar a identificação do cliente obrigatória em todos os pedidos e ajustou a cardinalidade CLIENTE↔PEDIDO para opcional (0,1), a fim de respeitar a regra de venda solta informada pelo entrevistado. Em revisão posterior, o grupo também removeu do dicionário de dados a duplicação do atributo de endereço em CLIENTE (já coberto integralmente pela entidade ENDERECO) e ajustou a cardinalidade de PEDIDO↔PAGAMENTO de obrigatória para opcional, de forma a refletir pedidos em aberto ainda não quitados. |
+| **Justificativa da escolha final** | A cardinalidade opcional foi mantida porque reflete uma prática real e frequente da organização (venda balcão sem cadastro); tornar o cliente ou o pagamento obrigatórios geraria inconsistências com o processo observado em campo. |
+| **Reflexão crítica** | A IA tende a sugerir modelos "mais normalizados" ou com relacionamentos obrigatórios por padrão, sem considerar particularidades operacionais levantadas apenas na pesquisa de campo. Isso reforça a necessidade de validar toda sugestão da IA contra a observação real da organização, e não aceitar recomendações genéricas de modelagem sem esse contraste. |
 
 ---
 
 ## Referências Bibliográficas
 
-ELMASRI, Ramez; NAVATHE, Shamkant B. Sistemas de Banco de Dados. 7. ed. São Paulo: Pearson, 2011.
+ELMASRI, Ramez; NAVATHE, Shamkant B. **Sistemas de Banco de Dados**. 7. ed. São Paulo: Pearson, 2011.
