@@ -26,7 +26,7 @@
 
 **Evidências da organização:**
 
-- Imagem da visita: `img/local.jpeg`
+- Imagem da visita: [`img/local.jpeg`](https://github.com/WagnerHata/Entrega1-Cid/blob/d71ce86e9224edd6eb750c833f290bf12bd10d1d/img/local.jpeg)
 - Instagram da empresa: https://www.instagram.com/riviarpresentes/
 - Endereço 1: R. Sete de Setembro, 555 - Parque Suzano, Suzano - SP, 08673-020
 - Endereço 2: Av. Ver. Narciso Yague Guimarães, 1001 - Jardim Armenia, Mogi das Cruzes - SP, 08780-000
