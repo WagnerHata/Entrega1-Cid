@@ -3,781 +3,292 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Dicionário de Dados — Modelo Conceitual</title>
+<title>Dicionário de Dados — Sistema de Vendas</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --bg: #0D1117;
-    --bg-panel: #131A24;
-    --bg-row: #10161F;
-    --bg-row-alt: #0F141C;
-    --border: #232E3D;
-    --border-soft: #1B2531;
-    --text: #DCE3EC;
-    --text-dim: #7C8AA0;
-    --text-faint: #4E5A6E;
-    --accent: #4FD1C5;
-    --accent-soft: rgba(79, 209, 197, 0.12);
-    --pk: #F2C078;
-    --pk-soft: rgba(242, 192, 120, 0.12);
-    --serif-display: 'Space Grotesk', sans-serif;
-    --mono: 'IBM Plex Mono', monospace;
-    padding-top: env(safe-area-inset-top, 0px);
-    padding-bottom: env(safe-area-inset-bottom, 0px);
+:root {
+  --bg: #14161a;
+  --panel: #1b1e25;
+  --panel-2: #20242c;
+  --border: #2a2e38;
+  --text: #e7e9ee;
+  --muted: #9198a6;
+  --pk: #d8a34d;
+  --fk: #4fb6a8;
+  --sans: 'Space Grotesk', 'Segoe UI', sans-serif;
+  --body: 'IBM Plex Sans', 'Segoe UI', sans-serif;
+  --mono: 'IBM Plex Mono', 'Courier New', monospace;
+  box-sizing: border-box;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f4f4f2; --panel: #ffffff; --panel-2: #f0f0ee; --border: #dcdcd8;
+    --text: #1a1c20; --muted: #6b6f78; --pk: #a8721f; --fk: #1f7a6c;
   }
-  html { scroll-padding-top: 84px; }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: var(--serif-display);
-    -webkit-font-smoothing: antialiased;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgba(255,255,255,0.035) 1px, transparent 1px);
-    background-size: 28px 28px;
-  }
+}
+:root[data-theme="dark"] { }
+html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+* { box-sizing: border-box; }
+body {
+  margin: 0; background: var(--bg); color: var(--text);
+  font-family: var(--body); line-height: 1.55;
+}
+.layout { display: flex; min-height: 100%; max-width: 1180px; margin: 0 auto; }
+nav.toc {
+  width: 230px; flex-shrink: 0; padding: 32px 18px;
+  position: sticky; top: env(safe-area-inset-top, 0px); align-self: flex-start;
+  max-height: 100vh; overflow-y: auto;
+  border-right: 1px solid var(--border);
+}
+nav.toc h1 {
+  font-family: var(--sans); font-size: 15px; font-weight: 600;
+  letter-spacing: 0.02em; margin: 0 0 4px;
+}
+nav.toc p.sub { color: var(--muted); font-size: 12.5px; margin: 0 0 22px; }
+nav.toc a {
+  display: block; color: var(--muted); text-decoration: none;
+  font-family: var(--mono); font-size: 13px; padding: 6px 0;
+  border-left: 2px solid transparent; padding-left: 10px; margin-left: -10px;
+}
+nav.toc a:hover { color: var(--text); border-left-color: var(--fk); }
 
-  /* ---------- Top bar ---------- */
-  header.topbar {
-    position: sticky;
-    top: 0;
-    z-index: 20;
-    padding-top: env(safe-area-inset-top, 0px);
-    background: rgba(13, 17, 23, 0.86);
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--border-soft);
-  }
-  .topbar-inner {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 16px 28px;
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    gap: 16px;
-    flex-wrap: wrap;
-  }
-  .brand {
-    display: flex;
-    align-items: baseline;
-    gap: 10px;
-    font-family: var(--mono);
-  }
-  .brand .dot { color: var(--accent); }
-  .brand-title {
-    font-size: 15px;
-    letter-spacing: 0.02em;
-    color: var(--text);
-  }
-  .brand-tag {
-    font-size: 12px;
-    color: var(--text-faint);
-  }
-  nav.entity-nav {
-    display: flex;
-    gap: 4px;
-    flex-wrap: wrap;
-  }
-  nav.entity-nav a {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--text-dim);
-    text-decoration: none;
-    padding: 6px 10px;
-    border-radius: 5px;
-    border: 1px solid transparent;
-    transition: border-color 0.15s, color 0.15s, background 0.15s;
-  }
-  nav.entity-nav a:hover,
-  nav.entity-nav a:focus-visible {
-    color: var(--accent);
-    border-color: var(--border);
-    background: var(--bg-panel);
-  }
+main { flex: 1; min-width: 0; padding: 36px 32px 100px; }
+header.top { margin-bottom: 36px; }
+header.top .eyebrow { color: var(--fk); font-family: var(--mono); font-size: 13px; }
+header.top h1 {
+  font-family: var(--sans); font-size: clamp(28px, 4vw, 38px); font-weight: 700;
+  margin: 6px 0 10px; letter-spacing: -0.01em;
+}
+header.top p { color: var(--muted); max-width: 62ch; margin: 0; font-size: 15px; }
 
-  /* ---------- Hero ---------- */
-  .hero {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 56px 28px 40px;
-  }
-  .hero-eyebrow {
-    font-family: var(--mono);
-    font-size: 12.5px;
-    color: var(--accent);
-    margin-bottom: 14px;
-  }
-  h1 {
-    font-size: clamp(30px, 4.6vw, 46px);
-    line-height: 1.08;
-    margin: 0 0 18px;
-    font-weight: 700;
-    letter-spacing: -0.01em;
-    max-width: 16ch;
-  }
-  .hero-desc {
-    color: var(--text-dim);
-    font-size: 16px;
-    line-height: 1.65;
-    max-width: 62ch;
-    margin: 0 0 28px;
-  }
-  .legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 22px;
-    padding-top: 22px;
-    border-top: 1px solid var(--border-soft);
-  }
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    font-size: 13px;
-    color: var(--text-dim);
-  }
-  .legend-swatch {
-    width: 10px;
-    height: 10px;
-    border-radius: 2px;
-    flex-shrink: 0;
-  }
-  .legend-swatch.pk { background: var(--pk); }
-  .legend-swatch.req { background: #6E7D93; }
+.legend { display: flex; gap: 18px; margin: 22px 0 0; flex-wrap: wrap; font-size: 12.5px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.badge {
+  font-family: var(--mono); font-size: 10.5px; font-weight: 600;
+  padding: 1px 6px; border-radius: 3px; letter-spacing: 0.03em;
+}
+.badge.pk { background: color-mix(in srgb, var(--pk) 18%, transparent); color: var(--pk); border: 1px solid color-mix(in srgb, var(--pk) 40%, transparent); }
+.badge.fk { background: color-mix(in srgb, var(--fk) 18%, transparent); color: var(--fk); border: 1px solid color-mix(in srgb, var(--fk) 40%, transparent); }
 
-  /* ---------- Entities ---------- */
-  main {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 0 28px 100px;
-  }
-  section.entity {
-    scroll-margin-top: 84px;
-    padding: 52px 0 8px;
-    border-top: 1px solid var(--border-soft);
-  }
-  section.entity:first-child { border-top: none; }
+section.entity {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 8px;
+  margin-bottom: 22px; overflow: hidden; scroll-margin-top: 20px;
+}
+section.entity .head {
+  padding: 16px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+}
+section.entity h2 {
+  font-family: var(--mono); font-size: 17px; font-weight: 600; margin: 0;
+  color: var(--text);
+}
+section.entity .note { color: var(--muted); font-size: 13px; font-style: italic; }
 
-  .entity-head {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 22px;
-  }
-  .entity-title-row {
-    display: flex;
-    align-items: baseline;
-    gap: 14px;
-  }
-  .entity-index {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text-faint);
-  }
-  h2.entity-title {
-    font-size: 24px;
-    margin: 0;
-    font-weight: 600;
-    letter-spacing: -0.01em;
-  }
-  .entity-note {
-    font-size: 13.5px;
-    color: var(--text-dim);
-    max-width: 46ch;
-    text-align: right;
-    line-height: 1.5;
-  }
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; min-width: 560px; }
+thead th {
+  text-align: left; font-family: var(--sans); font-size: 11.5px; font-weight: 600;
+  color: var(--muted); letter-spacing: 0.03em; padding: 10px 20px;
+  background: var(--panel-2); border-bottom: 1px solid var(--border);
+}
+tbody td { padding: 11px 20px; border-bottom: 1px solid var(--border); vertical-align: top; font-size: 13.5px; }
+tbody tr:last-child td { border-bottom: none; }
+td.attr { font-family: var(--mono); font-size: 13px; white-space: nowrap; }
+td.attr .badges { display: inline-flex; gap: 4px; margin-left: 8px; vertical-align: middle; }
+td.desc { color: var(--text); }
+td.rule { color: var(--muted); max-width: 320px; }
 
-  .table-wrap {
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    overflow-x: auto;
-    background: var(--bg-panel);
-  }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    min-width: 640px;
-  }
-  thead th {
-    text-align: left;
-    font-family: var(--mono);
-    font-weight: 500;
-    font-size: 11.5px;
-    letter-spacing: 0.04em;
-    color: var(--text-faint);
-    padding: 13px 20px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-  }
-  tbody tr {
-    border-bottom: 1px solid var(--border-soft);
-  }
-  tbody tr:last-child { border-bottom: none; }
-  tbody tr:nth-child(odd) { background: var(--bg-row); }
-  tbody tr:nth-child(even) { background: var(--bg-row-alt); }
+footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px 0 10px; }
 
-  td {
-    padding: 15px 20px;
-    font-size: 14px;
-    vertical-align: top;
-    line-height: 1.5;
-  }
-  td.col-attr { white-space: nowrap; width: 1%; }
-  td.col-desc { color: var(--text); min-width: 220px; }
-  td.col-rule { color: var(--text-dim); min-width: 220px; }
-
-  .attr-code {
-    font-family: var(--mono);
-    font-size: 13px;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    padding: 3px 9px 3px 3px;
-    border-radius: 6px;
-    border: 1px solid var(--border);
-  }
-  .attr-code .badge {
-    font-size: 9.5px;
-    letter-spacing: 0.03em;
-    padding: 1.5px 5px;
-    border-radius: 3px;
-    line-height: 1.5;
-    flex-shrink: 0;
-  }
-  .attr-code.is-pk { border-color: rgba(242,192,120,0.35); background: var(--pk-soft); }
-  .attr-code.is-pk .badge { background: var(--pk); color: #2A2115; }
-
-  .rule-tag {
-    display: inline-block;
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: #6E7D93;
-    margin-right: 8px;
-    vertical-align: middle;
-    position: relative;
-    top: -1px;
-  }
-  .rule-tag.strong { background: var(--pk); }
-
-  .rel-pair {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-family: var(--mono);
-    font-size: 12.5px;
-    white-space: nowrap;
-  }
-  .rel-ent { color: var(--text); }
-  .rel-arrow { color: var(--text-faint); }
-  td.col-card {
-    font-family: var(--mono);
-    font-size: 13px;
-    color: var(--text-dim);
-    white-space: nowrap;
-  }
-
-  /* ---------- Footer ---------- */
-  footer {
-    max-width: 1180px;
-    margin: 0 auto;
-    padding: 30px 28px 60px;
-    border-top: 1px solid var(--border-soft);
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 10px;
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--text-faint);
-  }
-
-  @media (max-width: 720px) {
-    .topbar-inner { padding: 14px 18px; }
-    nav.entity-nav { display: none; }
-    .hero { padding: 40px 18px 30px; }
-    main { padding: 0 18px 80px; }
-    .entity-note { text-align: left; max-width: 100%; }
-    td, thead th { padding: 12px 14px; }
-  }
-
-  /* Light mode support */
-  @media (prefers-color-scheme: light) {
-    :root:not([data-theme="dark"]) {
-      --bg: #F7F8FA;
-      --bg-panel: #FFFFFF;
-      --bg-row: #FFFFFF;
-      --bg-row-alt: #FAFBFC;
-      --border: #E2E6EC;
-      --border-soft: #EAEDF2;
-      --text: #1B2430;
-      --text-dim: #5B6779;
-      --text-faint: #96A0B0;
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #0D1117;
-    --bg-panel: #131A24;
-  }
+@media (max-width: 780px) {
+  .layout { flex-direction: column; }
+  nav.toc { width: 100%; position: static; border-right: none; border-bottom: 1px solid var(--border); max-height: none; }
+  main { padding: 28px 18px 80px; }
+}
 </style>
 </head>
 <body>
+<div class="layout">
+  <nav class="toc">
+    <h1>Dicionário de Dados</h1>
+    <p class="sub">Modelo conceitual — preliminar</p>
+    <a href="#cliente">CLIENTE</a>
+    <a href="#funcionario">FUNCIONARIO</a>
+    <a href="#fornecedor">FORNECEDOR</a>
+    <a href="#categoria">CATEGORIA</a>
+    <a href="#produto">PRODUTO</a>
+    <a href="#pedido">PEDIDO</a>
+    <a href="#item_pedido">ITEM_PEDIDO</a>
+    <a href="#pagamento">PAGAMENTO</a>
+    <a href="#movimentacao_estoque">MOVIMENTACAO_ESTOQUE</a>
+    <a href="#endereco">ENDERECO</a>
+  </nav>
 
-<header class="topbar">
-  <div class="topbar-inner">
-    <div class="brand">
-      <span class="brand-title">dicionario_dados<span class="dot">.</span>preliminar</span>
-      <span class="brand-tag">v0.1 — modelo conceitual</span>
-    </div>
-    <nav class="entity-nav">
-      <a href="#cliente">Cliente</a>
-      <a href="#funcionario">Funcionário</a>
-      <a href="#fornecedor">Fornecedor</a>
-      <a href="#categoria">Categoria</a>
-      <a href="#produto">Produto</a>
-      <a href="#pedido">Pedido</a>
-      <a href="#endereco">Endereço</a>
-      <a href="#der">DER</a>
-    </nav>
-  </div>
-</header>
+  <main>
+    <header class="top">
+      <div class="eyebrow">Dicionário de Dados Conceitual</div>
+      <h1>Sistema de Vendas &amp; Estoque</h1>
+      <p>Definição preliminar das entidades, atributos e regras de negócio associadas ao modelo de dados. Cada tabela abaixo corresponde a uma entidade do domínio.</p>
+      <div class="legend">
+        <span><span class="badge pk">PK</span> Chave primária</span>
+      </div>
+    </header>
 
-<div class="hero">
-  <div class="hero-eyebrow">Dicionário de Dados Conceitual · Preliminar</div>
-  <h1>Estrutura de dados do sistema de vendas</h1>
-  <p class="hero-desc">
-    Referência das sete entidades do modelo — atributos, descrições e regras de negócio associadas
-    a cada campo — seguida do mapeamento de relacionamentos (DER). Documento preliminar; sujeito a
-    revisão conforme o levantamento avança.
-  </p>
-  <div class="legend">
-    <div class="legend-item"><span class="legend-swatch pk"></span> PK — Chave Primária</div>
-    <div class="legend-item"><span class="legend-swatch req"></span> Regra de negócio associada</div>
-  </div>
+    <section class="entity" id="cliente">
+      <div class="head"><h2>CLIENTE</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_cliente<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do cliente</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
+          <tr><td class="attr">nome</td><td class="desc">Nome do cliente / identificador</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">documento</td><td class="desc">CPF ou CNPJ do cliente</td><td class="rule">Opcional no atendimento rápido; único se preenchido.</td></tr>
+          <tr><td class="attr">telefone</td><td class="desc">Telefone / WhatsApp</td><td class="rule">Obrigatório para contato e possível entrega.</td></tr>
+          <tr><td class="attr">email</td><td class="desc">E-mail do cliente</td><td class="rule">Opcional.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="funcionario">
+      <div class="head"><h2>FUNCIONARIO</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_funcionario<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do funcionário</td><td class="rule">Chave Primária. Gerado pelo sistema.</td></tr>
+          <tr><td class="attr">nome</td><td class="desc">Nome completo do funcionário</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">cpf</td><td class="desc">Documento do funcionário</td><td class="rule">Obrigatório e único.</td></tr>
+          <tr><td class="attr">cargo</td><td class="desc">Função (Vendedor, Caixa ou Gerente)</td><td class="rule">Indicação da permissão e atribuição. Define o nível de acesso conforme RNF03.</td></tr>
+          <tr><td class="attr">comissao_percentual</td><td class="desc">Percentual de comissão sobre vendas</td><td class="rule">Valor decimal padrão do vendedor (opcional).</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="fornecedor">
+      <div class="head"><h2>FORNECEDOR</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_fornecedor<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador do fornecedor</td><td class="rule">Chave Primária.</td></tr>
+          <tr><td class="attr">razao_social</td><td class="desc">Razão Social ou Nome Fantasia</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">cnpj</td><td class="desc">CNPJ da empresa fornecedora</td><td class="rule">Obrigatório e único.</td></tr>
+          <tr><td class="attr">telefone_contato</td><td class="desc">Canal direto de atendimento</td><td class="rule">Obrigatório.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="categoria">
+      <div class="head"><h2>CATEGORIA</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_categoria<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador da categoria</td><td class="rule">Chave Primária.</td></tr>
+          <tr><td class="attr">nome_categoria</td><td class="desc">Nome do agrupamento (ex: Bebidas, Roupas)</td><td class="rule">Obrigatório e único.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="produto">
+      <div class="head"><h2>PRODUTO</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_produto<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do produto</td><td class="rule">Chave Primária. Gerado pelo sistema.</td></tr>
+          <tr><td class="attr">codigo_estoque</td><td class="desc">Código interno de estoque (SKU)</td><td class="rule">Obrigatório e único.</td></tr>
+          <tr><td class="attr">nome_produto</td><td class="desc">Nome / descrição do produto</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">preco_varejo</td><td class="desc">Preço de venda unitário no varejo</td><td class="rule">Valor decimal positivo obrigatório.</td></tr>
+          <tr><td class="attr">preco_atacado</td><td class="desc">Preço de venda unitário no atacado</td><td class="rule">Valor decimal positivo obrigatório.</td></tr>
+          <tr><td class="attr">quantidade_estoque</td><td class="desc">Saldo físico atual em estoque</td><td class="rule">Atualizado por entradas e vendas.</td></tr>
+          <tr><td class="attr">id_categoria</td><td class="desc">Referência à categoria do produto</td><td class="rule">Obrigatório.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="pedido">
+      <div class="head"><h2>PEDIDO</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_pedido<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Código identificador do pedido</td><td class="rule">Chave Primária. Único.</td></tr>
+          <tr><td class="attr">data_hora</td><td class="desc">Data e horário da venda</td><td class="rule">Preenchimento automático no registro.</td></tr>
+          <tr><td class="attr">status</td><td class="desc">Situação (Orçamento, Aberto, Concluído, Cancelado)</td><td class="rule">Permite alteração enquanto estiver Aberto.</td></tr>
+          <tr><td class="attr">valor_total</td><td class="desc">Somatório total do pedido</td><td class="rule">Calculado automaticamente a partir dos itens.</td></tr>
+          <tr><td class="attr">id_cliente</td><td class="desc">Referência ao cliente</td><td class="rule">Opcional (permite NULL para venda solta).</td></tr>
+          <tr><td class="attr">id_funcionario</td><td class="desc">Funcionário responsável pelo atendimento</td><td class="rule">Obrigatório para identificação de autoria/comissão.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="item_pedido">
+      <div class="head">
+        <h2>ITEM_PEDIDO</h2>
+        <span class="note">entidade associativa — resolve N:M entre PEDIDO e PRODUTO</span>
+      </div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_item_pedido<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do item dentro do pedido</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
+          <tr><td class="attr">id_pedido</td><td class="desc">Referência ao pedido</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
+          <tr><td class="attr">id_produto</td><td class="desc">Referência ao produto</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
+          <tr><td class="attr">quantidade</td><td class="desc">Quantidade do produto no pedido</td><td class="rule">Obrigatório. Valor inteiro positivo.</td></tr>
+          <tr><td class="attr">preco_praticado</td><td class="desc">Preço unitário vigente no momento da venda</td><td class="rule">Copiado do PRODUTO no momento do registro (Regra: Congelamento do Valor Unitário / RF05).</td></tr>
+          <tr><td class="attr">subtotal</td><td class="desc">Valor do item (quantidade × preco_praticado)</td><td class="rule">Calculado automaticamente.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="pagamento">
+      <div class="head"><h2>PAGAMENTO</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_pagamento<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do pagamento</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
+          <tr><td class="attr">id_pedido</td><td class="desc">Referência ao pedido pago</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
+          <tr><td class="attr">forma_pagamento</td><td class="desc">Meio utilizado (dinheiro, cartão, PIX, etc.)</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">valor_pago</td><td class="desc">Valor recebido nessa transação</td><td class="rule">Obrigatório. Valor decimal positivo.</td></tr>
+          <tr><td class="attr">data_hora_pagamento</td><td class="desc">Data e horário do pagamento</td><td class="rule">Preenchimento automático.</td></tr>
+          <tr><td class="attr">status_pagamento</td><td class="desc">Situação (Pago, Parcial, Pendente)</td><td class="rule">Permite representar pagamento fracionado do mesmo pedido.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="movimentacao_estoque">
+      <div class="head"><h2>MOVIMENTACAO_ESTOQUE</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_movimentacao<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único da movimentação</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
+          <tr><td class="attr">id_produto</td><td class="desc">Referência ao produto movimentado</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
+          <tr><td class="attr">id_fornecedor</td><td class="desc">Referência ao fornecedor de origem</td><td class="rule">Chave Estrangeira. Opcional (permite NULL para ajustes internos).</td></tr>
+          <tr><td class="attr">tipo_movimentacao</td><td class="desc">Natureza (Entrada, Saída, Ajuste)</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">quantidade</td><td class="desc">Quantidade movimentada</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">data_hora</td><td class="desc">Data e horário da movimentação</td><td class="rule">Preenchimento automático.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <section class="entity" id="endereco">
+      <div class="head"><h2>ENDERECO</h2></div>
+      <div class="table-wrap"><table>
+        <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
+        <tbody>
+          <tr><td class="attr">id_endereco<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do endereço</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
+          <tr><td class="attr">logradouro</td><td class="desc">Rua, Avenida, Alameda, etc.</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">numero</td><td class="desc">Número do imóvel</td><td class="rule">Obrigatório (usar "S/N" para imóveis sem número).</td></tr>
+          <tr><td class="attr">complemento</td><td class="desc">Apartamento, bloco, ponto de referência</td><td class="rule">Opcional.</td></tr>
+          <tr><td class="attr">bairro</td><td class="desc">Bairro ou distrito</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">cidade</td><td class="desc">Nome do município</td><td class="rule">Obrigatório.</td></tr>
+          <tr><td class="attr">estado</td><td class="desc">Sigla da unidade federativa (UF, ex: SP, RJ)</td><td class="rule">Obrigatório (2 caracteres).</td></tr>
+          <tr><td class="attr">cep</td><td class="desc">Código de Endereçamento Postal</td><td class="rule">Obrigatório para envios/entregas.</td></tr>
+          <tr><td class="attr">principal</td><td class="desc">Indica se é o endereço padrão do cliente</td><td class="rule">Booleano (Sim/Não). Ajuda a preencher vendas automaticamente.</td></tr>
+          <tr><td class="attr">id_cliente</td><td class="desc">Referência ao cliente proprietário</td><td class="rule">Chave Estrangeira. Obrigatório para vincular ao cliente.</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+
+    <footer>Dicionário de Dados Conceitual — versão preliminar</footer>
+  </main>
 </div>
-
-<main>
-
-  <!-- CLIENTE -->
-  <section class="entity" id="cliente">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">01</span>
-        <h2 class="entity-title">Cliente</h2>
-      </div>
-      <p class="entity-note">Pessoa física ou jurídica que realiza compras.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_cliente</span></td>
-            <td class="col-desc">Identificador único do cliente</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária. Gerado automaticamente.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">nome</span></td>
-            <td class="col-desc">Nome do cliente / identificador</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">documento</span></td>
-            <td class="col-desc">CPF ou CNPJ do cliente</td>
-            <td class="col-rule"><span class="rule-tag"></span>Opcional no atendimento rápido; único se preenchido.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">telefone</span></td>
-            <td class="col-desc">Telefone / WhatsApp</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório para contato/vendas virtuais.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">email</span></td>
-            <td class="col-desc">E-mail do cliente</td>
-            <td class="col-rule"><span class="rule-tag"></span>Opcional.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">endereco_completo</span></td>
-            <td class="col-desc">Logradouro, número, CEP, cidade</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório apenas quando há entrega.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- FUNCIONARIO -->
-  <section class="entity" id="funcionario">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">02</span>
-        <h2 class="entity-title">Funcionário</h2>
-      </div>
-      <p class="entity-note">Colaborador com acesso ao sistema e/ou atuação em vendas.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_funcionario</span></td>
-            <td class="col-desc">Identificador único do funcionário</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária. Gerado pelo sistema.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">nome</span></td>
-            <td class="col-desc">Nome completo do funcionário</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">cpf</span></td>
-            <td class="col-desc">Documento do funcionário</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório e único.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">cargo</span></td>
-            <td class="col-desc">Função (Vendedor, Caixa, Gerente)</td>
-            <td class="col-rule"><span class="rule-tag"></span>Indicação da permissão e atribuição.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">comissao_percentual</span></td>
-            <td class="col-desc">Percentual de comissão sobre vendas</td>
-            <td class="col-rule"><span class="rule-tag"></span>Valor decimal padrão do vendedor (opcional).</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- FORNECEDOR -->
-  <section class="entity" id="fornecedor">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">03</span>
-        <h2 class="entity-title">Fornecedor</h2>
-      </div>
-      <p class="entity-note">Empresa responsável pelo abastecimento de produtos.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_fornecedor</span></td>
-            <td class="col-desc">Identificador do fornecedor</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">razao_social</span></td>
-            <td class="col-desc">Razão Social ou Nome Fantasia</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">cnpj</span></td>
-            <td class="col-desc">CNPJ da empresa fornecedora</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório e único.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">telefone_contato</span></td>
-            <td class="col-desc">Canal direto de atendimento</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- CATEGORIA -->
-  <section class="entity" id="categoria">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">04</span>
-        <h2 class="entity-title">Categoria</h2>
-      </div>
-      <p class="entity-note">Agrupamento usado para classificar os produtos.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_categoria</span></td>
-            <td class="col-desc">Identificador da categoria</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">nome_categoria</span></td>
-            <td class="col-desc">Nome do agrupamento (ex: Bebidas, Roupas)</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório e único.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- PRODUTO -->
-  <section class="entity" id="produto">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">05</span>
-        <h2 class="entity-title">Produto</h2>
-      </div>
-      <p class="entity-note">Item comercializado, vinculado a uma categoria.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_produto</span></td>
-            <td class="col-desc">Identificador único do produto</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária. Gerado pelo sistema.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">codigo_estoque</span></td>
-            <td class="col-desc">Código interno de estoque (SKU)</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório e único.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">nome_produto</span></td>
-            <td class="col-desc">Nome / descrição do produto</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">preco_venda</span></td>
-            <td class="col-desc">Preço de venda unitário no varejo</td>
-            <td class="col-rule"><span class="rule-tag"></span>Valor decimal positivo obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">preco_atacado</span></td>
-            <td class="col-desc">Preço de venda unitário no atacado</td>
-            <td class="col-rule"><span class="rule-tag"></span>Valor decimal positivo obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">quantidade_estoque</span></td>
-            <td class="col-desc">Saldo físico atual em estoque</td>
-            <td class="col-rule"><span class="rule-tag"></span>Atualizado por entradas e vendas.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">id_categoria</span></td>
-            <td class="col-desc">Referência à categoria do produto</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- PEDIDO -->
-  <section class="entity" id="pedido">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">06</span>
-        <h2 class="entity-title">Pedido</h2>
-      </div>
-      <p class="entity-note">Registro de uma venda, do orçamento à conclusão.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_pedido</span></td>
-            <td class="col-desc">Código identificador do pedido</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária. Único.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">data_hora</span></td>
-            <td class="col-desc">Data e horário da venda</td>
-            <td class="col-rule"><span class="rule-tag"></span>Preenchimento automático no registro.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">status</span></td>
-            <td class="col-desc">Situação (Orçamento, Aberto, Concluído, Cancelado)</td>
-            <td class="col-rule"><span class="rule-tag"></span>Permite alteração enquanto estiver Aberto.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">valor_total</span></td>
-            <td class="col-desc">Somatório total do pedido</td>
-            <td class="col-rule"><span class="rule-tag"></span>Calculado automaticamente a partir dos itens.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">id_cliente</span></td>
-            <td class="col-desc">Referência ao cliente</td>
-            <td class="col-rule"><span class="rule-tag"></span>Opcional (permite NULL para venda solta).</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">id_funcionario</span></td>
-            <td class="col-desc">Funcionário responsável pelo atendimento</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório para identificação de autoria/comissão.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- ENDERECO -->
-  <section class="entity" id="endereco">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">07</span>
-        <h2 class="entity-title">Endereço</h2>
-      </div>
-      <p class="entity-note">Endereços associados a um cliente, usados para entrega.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio associada</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="attr-code is-pk"><span class="badge">PK</span>id_endereco</span></td>
-            <td class="col-desc">Identificador único do endereço</td>
-            <td class="col-rule"><span class="rule-tag strong"></span>Chave Primária. Gerado automaticamente.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">logradouro</span></td>
-            <td class="col-desc">Rua, Avenida, Alameda, etc.</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">numero</span></td>
-            <td class="col-desc">Número do imóvel</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório (usar "S/N" para imóveis sem número).</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">complemento</span></td>
-            <td class="col-desc">Apartamento, bloco, ponto de referência</td>
-            <td class="col-rule"><span class="rule-tag"></span>Opcional.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">bairro</span></td>
-            <td class="col-desc">Bairro ou distrito</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">cidade</span></td>
-            <td class="col-desc">Nome do município</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">estado</span></td>
-            <td class="col-desc">Sigla da unidade federativa (UF, ex: SP, RJ)</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório (2 caracteres).</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">cep</span></td>
-            <td class="col-desc">Código de Endereçamento Postal</td>
-            <td class="col-rule"><span class="rule-tag"></span>Obrigatório para envios/entregas.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">principal</span></td>
-            <td class="col-desc">Indica se é o endereço padrão do cliente</td>
-            <td class="col-rule"><span class="rule-tag"></span>Booleano (Sim/Não). Ajuda a preencher vendas automaticamente.</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="attr-code">id_cliente</span></td>
-            <td class="col-desc">Referência ao cliente proprietário</td>
-            <td class="col-rule"><span class="rule-tag"></span>Chave Estrangeira. Obrigatório para vincular ao cliente.</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- DER -->
-  <section class="entity" id="der">
-    <div class="entity-head">
-      <div class="entity-title-row">
-        <span class="entity-index">DER</span>
-        <h2 class="entity-title">Modelagem Conceitual e Diagrama</h2>
-      </div>
-      <p class="entity-note">Entidades e relacionamentos mapeados, com cardinalidade de origem e destino.</p>
-    </div>
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr><th>Relacionamento</th><th>Origem</th><th>Destino</th><th>Tipo de conexão</th></tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">CLIENTE</span><span class="rel-arrow">→</span><span class="rel-ent">ENDERECO</span></span></td>
-            <td class="col-card">(1,1)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Um para Muitos (1:N)</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">CLIENTE</span><span class="rel-arrow">→</span><span class="rel-ent">PEDIDO</span></span></td>
-            <td class="col-card">(0,1)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Um para Muitos (1:N) — Opcional</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">FUNCIONARIO</span><span class="rel-arrow">→</span><span class="rel-ent">PEDIDO</span></span></td>
-            <td class="col-card">(1,1)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Um para Muitos (1:N)</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">CATEGORIA</span><span class="rel-arrow">→</span><span class="rel-ent">PRODUTO</span></span></td>
-            <td class="col-card">(1,1)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Um para Muitos (1:N)</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">PEDIDO</span><span class="rel-arrow">↔</span><span class="rel-ent">PRODUTO</span></span></td>
-            <td class="col-card">(1,N)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Muitos para Muitos (N:N) — com atributos</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">PEDIDO</span><span class="rel-arrow">→</span><span class="rel-ent">PAGAMENTO</span></span></td>
-            <td class="col-card">(1,1)</td>
-            <td class="col-card">(1,N)</td>
-            <td class="col-desc">Um para Muitos (1:N) — Obrigatório</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">PRODUTO</span><span class="rel-arrow">→</span><span class="rel-ent">MOVIMENTACAO_ESTOQUE</span></span></td>
-            <td class="col-card">(1,1)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Um para Muitos (1:N)</td>
-          </tr>
-          <tr>
-            <td class="col-attr"><span class="rel-pair"><span class="rel-ent">FORNECEDOR</span><span class="rel-arrow">→</span><span class="rel-ent">MOVIMENTACAO_ESTOQUE</span></span></td>
-            <td class="col-card">(0,1)</td>
-            <td class="col-card">(0,N)</td>
-            <td class="col-desc">Um para Muitos (1:N) — Opcional</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <span>7 entidades · 40 atributos · 8 relacionamentos</span>
-  <span>documento preliminar — sujeito a revisão</span>
-</footer>
-
 </body>
 </html>
