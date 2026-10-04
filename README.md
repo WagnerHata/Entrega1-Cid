@@ -230,8 +230,12 @@ A exigência da LGPD (Seção 4) reforça a separação entre dados operacionais
 ---
 
 ## 7. Diagrama Entidade-Relacionamento (DER)
-
 ![Diagrama Entidade-Relacionamento](DER/DER%20conceitual.png)
+
+📁 [Abrir a pasta do DER](DER)
+
+
+
 O DER representa as 9 entidades levantadas nas Seções 5 e 6 — CLIENTE, FUNCIONARIO, FORNECEDOR, CATEGORIA, PRODUTO, PEDIDO, ENDERECO, PAGAMENTO e MOVIMENTACAO_ESTOQUE — com seus atributos e relacionamentos. A relação N:M entre PEDIDO e PRODUTO é representada pelo relacionamento CONTEM.
 
 ---
