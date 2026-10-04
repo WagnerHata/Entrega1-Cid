@@ -238,6 +238,7 @@ A exigência da LGPD (Seção 4) reforça a separação entre dados operacionais
 ## 7. Diagrama Entidade-Relacionamento (DER)
 
 ![Diagrama Entidade-Relacionamento](DER/DER%20conceitual.png)
+
 📁 [Abrir a pasta do DER](DER)
 
 
