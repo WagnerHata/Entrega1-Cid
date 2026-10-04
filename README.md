@@ -49,7 +49,7 @@
 - **RF05 - Preservação de Histórico de Preço:** Gravar o preço praticado do item no momento da venda, garantindo que reajustes futuros no catálogo não alterem o valor histórico das vendas passadas.
 - **RF06 - Correção Lógica de Dados:** Garantir que exclusões acidentais sejam tratadas via sinalização/correção de registros, sem perda indesejada do histórico.
 - **RF07 - Relatório Diário de Desempenho:** Emitir relatórios diários do faturamento consolidado, contagem de vendas e cálculo automático do Ticket Médio.
-- - **RF08 - Registro de Pagamentos:** Permitir registrar um ou mais pagamentos por pedido, com forma de pagamento, valor e situação (Pago, Parcial ou Pendente).
+- **RF08 - Registro de Pagamentos:** Permitir registrar um ou mais pagamentos por pedido, com forma de pagamento, valor e situação (Pago, Parcial ou Pendente).
 - **RF09 - Controle de Movimentação de Estoque:** Registrar entradas, saídas e ajustes de estoque por produto, mantendo o histórico das movimentações.
 - **RF10 - Cadastros de Apoio:** Permitir o cadastro de fornecedores, categorias de produtos e funcionários (com cargo e comissão).
 
