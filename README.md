@@ -42,7 +42,7 @@
 
 ### 3.1 Requisitos Funcionais
 
-- **RF01 - Cadastro de Clientes:** Permitir o registro de clientes com Nome, Telefone, E-mail, Documento (CPF/RG) e Endereço para entregas.
+- **RF01 - Cadastro de Clientes:** Permitir o registro de clientes com Nome, Telefone, E-mail, Documento (CPF/CPNJ) e Endereço para entregas.
 - **RF02 - Venda Balcão (Venda Solta):** Permitir o registro de vendas/pedidos sem obrigatoriedade de vincular um cliente cadastrado.
 - **RF03 - Precificação Dupla no Catálogo:** Permitir o cadastro de produtos com Código de Estoque (SKU), Código de Catálogo e valores diferenciados para Atacado e Varejo.
 - **RF04 - Alteração de Pedidos em Aberto:** Permitir acrescentar, editar ou remover itens de um pedido previamente aberto utilizando seu identificador original.
@@ -115,7 +115,7 @@ O dicionário completo também está disponível em HTML (`dicionariodedados.htm
 | Atributo | Descrição | Regra de negócio associada |
 |----------|-----------|----------------------------|
 | id_categoria | Identificador da categoria | Chave Primária. |
-| nome_categoria | Nome do agrupamento (ex:Canetas,Cestas de Presentes,Pelúcias) | Obrigatório e único. |
+| nome_categoria | Nome do agrupamento (ex:Canetas, Cestas de Presentes, Pelúcias) | Obrigatório e único. |
 
 ### Entidade: PRODUTO
 
