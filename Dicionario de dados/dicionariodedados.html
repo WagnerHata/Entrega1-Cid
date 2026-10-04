@@ -121,7 +121,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px
     <a href="#categoria">CATEGORIA</a>
     <a href="#produto">PRODUTO</a>
     <a href="#pedido">PEDIDO</a>
-    <a href="#item_pedido">ITEM_PEDIDO</a>
+    <a href="#contem">CONTEM (N:M)</a>
     <a href="#pagamento">PAGAMENTO</a>
     <a href="#movimentacao_estoque">MOVIMENTACAO_ESTOQUE</a>
     <a href="#endereco">ENDERECO</a>
@@ -131,7 +131,7 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px
     <header class="top">
       <div class="eyebrow">Dicionário de Dados Conceitual</div>
       <h1>Sistema de Vendas &amp; Estoque</h1>
-      <p>Definição preliminar das entidades, atributos e regras de negócio associadas ao modelo de dados. Cada tabela abaixo corresponde a uma entidade do domínio.</p>
+      <p>Definição preliminar das entidades, atributos e regras de negócio associadas ao modelo de dados. Cada tabela abaixo corresponde a uma das 9 entidades do domínio, exceto a tabela CONTEM, que descreve os atributos do relacionamento N:M entre PEDIDO e PRODUTO.</p>
       <div class="legend">
         <span><span class="badge pk">PK</span> Chave primária</span>
       </div>
@@ -220,19 +220,16 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px
       </table></div>
     </section>
 
-    <section class="entity" id="item_pedido">
+    <section class="entity" id="contem">
       <div class="head">
-        <h2>ITEM_PEDIDO</h2>
-        <span class="note">entidade associativa — resolve N:M entre PEDIDO e PRODUTO</span>
+        <h2>CONTEM</h2>
+        <span class="note">relacionamento N:M entre PEDIDO e PRODUTO — atributos do relacionamento</span>
       </div>
       <div class="table-wrap"><table>
         <thead><tr><th>Atributo</th><th>Descrição</th><th>Regra de negócio</th></tr></thead>
         <tbody>
-          <tr><td class="attr">id_item_pedido<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do item dentro do pedido</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
-          <tr><td class="attr">id_pedido</td><td class="desc">Referência ao pedido</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
-          <tr><td class="attr">id_produto</td><td class="desc">Referência ao produto</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
           <tr><td class="attr">quantidade</td><td class="desc">Quantidade do produto no pedido</td><td class="rule">Obrigatório. Valor inteiro positivo.</td></tr>
-          <tr><td class="attr">preco_praticado</td><td class="desc">Preço unitário vigente no momento da venda</td><td class="rule">Copiado do PRODUTO no momento do registro (Regra: Congelamento do Valor Unitário / RF05).</td></tr>
+          <tr><td class="attr">preco_praticado</td><td class="desc">Preço unitário (atacado ou varejo) vigente no momento da venda</td><td class="rule">Obrigatório. Copiado do PRODUTO no momento do registro (Regra: Congelamento do Valor Unitário / RF05).</td></tr>
           <tr><td class="attr">subtotal</td><td class="desc">Valor do item (quantidade × preco_praticado)</td><td class="rule">Calculado automaticamente.</td></tr>
         </tbody>
       </table></div>
@@ -246,9 +243,9 @@ footer { text-align: center; color: var(--muted); font-size: 12px; padding: 30px
           <tr><td class="attr">id_pagamento<span class="badges"><span class="badge pk">PK</span></span></td><td class="desc">Identificador único do pagamento</td><td class="rule">Chave Primária. Gerado automaticamente.</td></tr>
           <tr><td class="attr">id_pedido</td><td class="desc">Referência ao pedido pago</td><td class="rule">Chave Estrangeira. Obrigatório.</td></tr>
           <tr><td class="attr">forma_pagamento</td><td class="desc">Meio utilizado (dinheiro, cartão, PIX, etc.)</td><td class="rule">Obrigatório.</td></tr>
-          <tr><td class="attr">valor_pago</td><td class="desc">Valor recebido nessa transação</td><td class="rule">Obrigatório. Valor decimal positivo.</td></tr>
+          <tr><td class="attr">valor</td><td class="desc">Valor recebido nessa transação</td><td class="rule">Obrigatório. Valor decimal positivo.</td></tr>
           <tr><td class="attr">data_hora_pagamento</td><td class="desc">Data e horário do pagamento</td><td class="rule">Preenchimento automático.</td></tr>
-          <tr><td class="attr">status_pagamento</td><td class="desc">Situação (Pago, Parcial, Pendente)</td><td class="rule">Permite representar pagamento fracionado do mesmo pedido.</td></tr>
+          <tr><td class="attr">status_pagamento</td><td class="desc">Situação (Pago, Parcial, Pendente)</td><td class="rule">Permite representar pagamento fracionado do mesmo pedido. Todo pedido possui ao menos um pagamento; enquanto não quitado, é registrado como Pendente.</td></tr>
         </tbody>
       </table></div>
     </section>
