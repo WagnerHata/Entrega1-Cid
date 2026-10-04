@@ -28,12 +28,15 @@
 
 ## 2. Processos de Negócio
 
-- **Atendimento e Prospecção:** Identificação do perfil do cliente (presencial), apresentação do catálogo e negociação de valores (atacado/varejo).
-- **Elaboração e Flexibilização do Pedido:** Abertura do orçamento/pedido sob um código numérico. O cliente pode retornar e acrescentar/alterar itens no mesmo pedido sem a necessidade de gerar um novo registro.
-- **Despacho e Logística:** Preparação do produto e envio. Caso haja necessidade de envio via Correios, o endereço completo é exigido e vinculado ao cadastro.
-- **Atualização de Catálogo e Maquininhas:** Alteração de preços do produto na página e terminais de venda, mantendo o valor histórico congelado nas vendas antigas.
+- **Principais processos mapeados:**
+  - **Atendimento e Prospecção:** Identificação do perfil do cliente (presencial), apresentação do catálogo e negociação de valores (atacado/varejo).
+  - **Elaboração e Flexibilização do Pedido:** Abertura do orçamento/pedido sob um código numérico. O cliente pode retornar e acrescentar/alterar itens no mesmo pedido sem a necessidade de gerar um novo registro.
+  - **Recebimento de Pagamento:** Registro da forma de pagamento do pedido (dinheiro, cartão, PIX), inclusive pagamento fracionado, com acompanhamento do que ainda está pendente.
+  - **Despacho e Logística:** Preparação do produto e envio. Caso haja necessidade de envio via Correios, o endereço completo é exigido e vinculado ao cadastro.
+  - **Reposição de Estoque e Fornecedores:** Entrada de mercadorias vindas de fornecedores e ajustes internos de estoque, mantendo o histórico das movimentações.
+  - **Atualização de Catálogo e Maquininhas:** Alteração de preços do produto na página e terminais de venda, mantendo o valor histórico congelado nas vendas antigas.
+- **Fluxogramas:** Não elaborados nesta entrega (item opcional).
 
----
 
 ## 3. Requisitos do Sistema
 
@@ -46,6 +49,9 @@
 - **RF05 - Preservação de Histórico de Preço:** Gravar o preço praticado do item no momento da venda, garantindo que reajustes futuros no catálogo não alterem o valor histórico das vendas passadas.
 - **RF06 - Correção Lógica de Dados:** Garantir que exclusões acidentais sejam tratadas via sinalização/correção de registros, sem perda indesejada do histórico.
 - **RF07 - Relatório Diário de Desempenho:** Emitir relatórios diários do faturamento consolidado, contagem de vendas e cálculo automático do Ticket Médio.
+- - **RF08 - Registro de Pagamentos:** Permitir registrar um ou mais pagamentos por pedido, com forma de pagamento, valor e situação (Pago, Parcial ou Pendente).
+- **RF09 - Controle de Movimentação de Estoque:** Registrar entradas, saídas e ajustes de estoque por produto, mantendo o histórico das movimentações.
+- **RF10 - Cadastros de Apoio:** Permitir o cadastro de fornecedores, categorias de produtos e funcionários (com cargo e comissão).
 
 ### 3.2 Requisitos Não Funcionais
 
@@ -109,7 +115,7 @@ O dicionário completo também está disponível em HTML (`dicionariodedados.htm
 | Atributo | Descrição | Regra de negócio associada |
 |----------|-----------|----------------------------|
 | id_categoria | Identificador da categoria | Chave Primária. |
-| nome_categoria | Nome do agrupamento (ex: Bebidas, Roupas) | Obrigatório e único. |
+| nome_categoria | Nome do agrupamento (ex:Canetas,Cestas de Presentes,Pelúcias) | Obrigatório e único. |
 
 ### Entidade: PRODUTO
 
@@ -230,8 +236,8 @@ A exigência da LGPD (Seção 4) reforça a separação entre dados operacionais
 ---
 
 ## 7. Diagrama Entidade-Relacionamento (DER)
-![Diagrama Entidade-Relacionamento](DER/DER%20conceitual.png)
 
+![Diagrama Entidade-Relacionamento](DER/DER%20conceitual.png)
 📁 [Abrir a pasta do DER](DER)
 
 
@@ -269,6 +275,8 @@ O modelo foi estruturado para permitir evolução posterior para os modelos lóg
 | **Trechos rejeitados ou corrigidos** | O grupo rejeitou a sugestão de tornar a identificação do cliente obrigatória em todos os pedidos e ajustou a cardinalidade CLIENTE↔PEDIDO para opcional (0,1), a fim de respeitar a regra de venda solta informada pelo entrevistado. Em revisão posterior, o grupo também removeu do dicionário de dados a duplicação do atributo de endereço em CLIENTE (já coberto integralmente pela entidade ENDERECO). Por fim, o grupo removeu a entidade ITEM_PEDIDO do dicionário e do README e alinhou nomes de atributos e cardinalidades (CLIENTE↔ENDERECO, PEDIDO↔PRODUTO e PEDIDO↔PAGAMENTO) ao DER, que representa a relação PEDIDO↔PRODUTO como um relacionamento N:M (CONTEM). |
 | **Justificativa da escolha final** | A cardinalidade opcional foi mantida porque reflete uma prática real e frequente da organização (venda balcão sem cadastro); tornar o cliente obrigatório geraria inconsistências com o processo observado em campo. |
 | **Reflexão crítica** | A IA tende a sugerir modelos "mais normalizados" ou com relacionamentos obrigatórios por padrão, sem considerar particularidades operacionais levantadas apenas na pesquisa de campo. Isso reforça a necessidade de validar toda sugestão da IA contra a observação real da organização, e não aceitar recomendações genéricas de modelagem sem esse contraste. |
+
+
 
 ---
 
