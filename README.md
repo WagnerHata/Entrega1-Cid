@@ -277,6 +277,20 @@ O modelo foi estruturado para permitir evolução posterior para os modelos lóg
 | **Justificativa da escolha final** | A cardinalidade opcional foi mantida porque reflete uma prática real e frequente da organização (venda balcão sem cadastro); tornar o cliente obrigatório geraria inconsistências com o processo observado em campo. |
 | **Reflexão crítica** | A IA tende a sugerir modelos "mais normalizados" ou com relacionamentos obrigatórios por padrão, sem considerar particularidades operacionais levantadas apenas na pesquisa de campo. Isso reforça a necessidade de validar toda sugestão da IA contra a observação real da organização, e não aceitar recomendações genéricas de modelagem sem esse contraste. |
 
+### Segundo uso de IA
+
+| Item | Registro |
+|------|----------|
+| **Ferramenta e etapa** | Claude (Anthropic) — revisão de consistência entre README, dicionário de dados e DER, e ajuste dos textos. |
+| **Motivação** | Verificar se os três entregáveis estavam coerentes entre si e com o esqueleto do professor. |
+| **Prompt(s) utilizados** | "Esse esqueleto é o que o meu professor quer; o outro é o meu README; outro é o dicionário de dados; e por último a imagem do diagrama. Vê se está tudo certo." Depois, pedidos para alinhar README e dicionário ao DER. |
+| **Resposta recebida** | A IA apontou diferenças entre os arquivos: o DER tinha 9 entidades e os textos 10 (ITEM_PEDIDO), cardinalidades de PEDIDO↔PAGAMENTO e CLIENTE↔ENDERECO diferentes, e o atributo `valor`/`valor_pago`. |
+| **Fontes consultadas e verificadas** | Nenhuma fonte externa. O grupo conferiu as sugestões comparando README, dicionário e imagem do DER. |
+| **Trechos rejeitados ou corrigidos** | O grupo optou por alinhar os textos ao DER (9 entidades) em vez de incluir ITEM_PEDIDO no diagrama. Com isso, removeu a entidade ITEM_PEDIDO do dicionário e do README e alinhou nomes de atributos e cardinalidades (CLIENTE↔ENDERECO, PEDIDO↔PRODUTO e PEDIDO↔PAGAMENTO) ao DER, que representa a relação PEDIDO↔PRODUTO como um relacionamento N:M (CONTEM). |
+| **Justificativa da escolha final** | O DER é o artefato de maior peso na avaliação, então os demais arquivos foram ajustados para refletir o que ele mostra. |
+| **Reflexão crítica** | A IA não conhecia a rubrica detalhada do professor nem a pesquisa de campo, então suas estimativas e sugestões de modelagem foram tratadas como apoio, não como verdade. |
+
+
 
 
 ---
